@@ -1,0 +1,23 @@
+.connect-button,
+.connect-button-1,
+.connect-button-2 {
+  align-items: flex-start;
+  border: 1px solid;
+  border-color: var(--white);
+  display: flex;
+  gap: 10px;
+  padding: 5px 10px;
+  position: relative;
+  width: fit-content;
+}
+
+.connect,
+.connect-1,
+.connect-2 {
+  letter-spacing: 0;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  width: fit-content;
+}
+

@@ -1,0 +1,55 @@
+.header-2 {
+  align-items: flex-start;
+  background-color: transparent;
+  display: flex;
+  flex-shrink: 1;
+  gap: 49px;
+  height: auto;
+  margin-right: 39.52px;
+  margin-top: 70px;
+  position: relative;
+  width: fit-content;
+  z-index: 1;
+}
+
+.title-4 {
+  align-items: center;
+  display: flex;
+  gap: 5px;
+  position: relative;
+  width: fit-content;
+}
+
+.site-logo-2 {
+  height: 65.48px;
+  min-width: 65.48px;
+  position: relative;
+}
+
+.site-title-2 {
+  align-items: flex-start;
+  display: flex;
+  gap: 10px;
+  padding: 10px;
+  position: relative;
+  width: fit-content;
+}
+
+.title-5 {
+  letter-spacing: 0;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  width: fit-content;
+}
+
+.header-page-select-2 {
+  align-items: center;
+  display: flex;
+  gap: 18px;
+  justify-content: center;
+  padding: 17px 10px;
+  position: relative;
+  width: fit-content;
+}
+

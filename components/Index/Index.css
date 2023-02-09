@@ -1,0 +1,28 @@
+.index {
+  align-items: center;
+  background-color: var(--spectra);
+  border: 1px none;
+  display: flex;
+  flex-direction: column;
+  min-height: 1024px;
+  position: relative;
+  width: 100%;
+}
+
+.claim-your-commissio {
+  letter-spacing: 0;
+  line-height: normal;
+  margin-right: 258.0px;
+  margin-top: 223px;
+  min-height: 185px;
+  min-width: 588px;
+  z-index: 2;
+}
+
+.span-13 {
+  color: var(--white);
+  font-family: var(--font-family-fira_code);
+  font-size: var(--font-size-l);
+  font-weight: 400;
+}
+

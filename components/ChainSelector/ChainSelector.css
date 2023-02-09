@@ -1,0 +1,46 @@
+.chain-selector,
+.chain-selector-1 {
+  align-items: center;
+  display: flex;
+  height: 40px;
+  min-width: 171px;
+  position: relative;
+}
+
+.frame-45,
+.frame-45-1 {
+  align-items: center;
+  display: flex;
+  flex: 1;
+  height: 40px;
+  padding: 0px 10px;
+  position: relative;
+  width: 171px;
+}
+
+.frame-43,
+.frame-43-1 {
+  align-items: flex-start;
+  display: flex;
+  gap: 10px;
+  padding: 10px;
+  position: relative;
+  width: 131px;
+}
+
+.chain-select,
+.chain-select-1 {
+  letter-spacing: 0;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  width: fit-content;
+}
+
+.frame-44,
+.frame-44-1 {
+  height: 32px;
+  min-width: 20px;
+  position: relative;
+}
+

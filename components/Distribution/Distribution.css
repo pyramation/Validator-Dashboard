@@ -1,0 +1,105 @@
+.distribution {
+  align-items: center;
+  background-color: var(--spectra);
+  border: 1px none;
+  display: flex;
+  flex-direction: column;
+  min-height: 1024px;
+  position: relative;
+  width: 100%;
+}
+
+.distribution-function-container {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  margin-left: 3.71px;
+  margin-top: 77px;
+  min-height: 756px;
+  width: 1022px;
+  z-index: 2;
+}
+
+.title-box {
+  align-items: center;
+  display: flex;
+  gap: 172px;
+  justify-content: center;
+  position: relative;
+  width: fit-content;
+}
+
+.function-title {
+  align-items: center;
+  display: flex;
+  height: 42px;
+  min-width: 678.71px;
+  position: relative;
+}
+
+.function-box {
+  border: 1px solid;
+  border-color: var(--white);
+  display: flex;
+  flex-direction: column;
+  gap: 44px;
+  height: 686px;
+  margin-right: 4.68px;
+  position: relative;
+  width: 991px;
+}
+
+.commission-div {
+  display: flex;
+  margin-left: 232px;
+  width: 541px;
+}
+
+.commission-grid {
+  display: flex;
+  flex: 1;
+}
+
+.frame-47 {
+  align-items: center;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 30px;
+  height: 522.43px;
+  padding: 12px 0px 0px;
+  position: relative;
+  width: 541px;
+}
+
+.frame-46 {
+  align-items: flex-start;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
+  position: relative;
+  width: fit-content;
+}
+
+.group-1 {
+  height: 260.83px;
+  min-width: 521px;
+  position: relative;
+}
+
+.overlap-group {
+  height: 261px;
+  position: relative;
+  width: 521px;
+}
+
+.output-div-box {
+  height: 261px;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 521px;
+}
+
