@@ -1,6 +1,6 @@
 .distribution {
   align-items: center;
-  background-color: var(--spectra);
+  background-color: rgba(57, 85, 87, 1.00);
   border: 1px none;
   display: flex;
   flex-direction: column;
