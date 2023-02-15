@@ -40,7 +40,7 @@ export function useCommission(): number {
       const commission = data.commission?.commission;
       let amount = 0;
       if (commission && commission.length > 0) {
-        amount = commission.find((c: any) => c.denom === denom)?.amount || 0;
+        amount = parseInt(commission.find((c: any) => c.denom === denom)?.amount || '0');
       }
 
       const roundedCommission = Math.round(Number(amount)) / 100;
@@ -50,8 +50,8 @@ export function useCommission(): number {
 
     const onStorageChange = async () => {
       const chainName = window.localStorage.getItem(selectedChainKey) as ChainName;
-      const commission = await fetchCommission(chainName);
-      setCommission(commission);
+      const newcommission = await fetchCommission(chainName);
+      setCommission(newcommission);
     };
 
     onStorageChange();
