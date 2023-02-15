@@ -51,64 +51,64 @@ import * as _49 from "./provider/v1beta1/provider";
 import * as _50 from "./provider/v1beta2/genesis";
 import * as _51 from "./provider/v1beta2/provider";
 import * as _52 from "./provider/v1beta2/query";
-import * as _286 from "./audit/v1beta1/audit.amino";
-import * as _287 from "./audit/v1beta2/audit.amino";
-import * as _288 from "./cert/v1beta2/cert.amino";
-import * as _289 from "./deployment/v1beta1/deployment.amino";
-import * as _290 from "./deployment/v1beta2/service.amino";
-import * as _291 from "./market/v1beta2/service.amino";
-import * as _292 from "./provider/v1beta1/provider.amino";
-import * as _293 from "./provider/v1beta2/provider.amino";
-import * as _294 from "./audit/v1beta1/audit.registry";
-import * as _295 from "./audit/v1beta2/audit.registry";
-import * as _296 from "./cert/v1beta2/cert.registry";
-import * as _297 from "./deployment/v1beta1/deployment.registry";
-import * as _298 from "./deployment/v1beta2/service.registry";
-import * as _299 from "./market/v1beta2/service.registry";
-import * as _300 from "./provider/v1beta1/provider.registry";
-import * as _301 from "./provider/v1beta2/provider.registry";
-import * as _302 from "./audit/v1beta2/query.lcd";
-import * as _303 from "./cert/v1beta2/query.lcd";
-import * as _304 from "./deployment/v1beta1/query.lcd";
-import * as _305 from "./deployment/v1beta2/query.lcd";
-import * as _306 from "./escrow/v1beta1/query.lcd";
-import * as _307 from "./escrow/v1beta2/query.lcd";
-import * as _308 from "./market/v1beta2/query.lcd";
-import * as _309 from "./provider/v1beta2/query.lcd";
-import * as _310 from "./audit/v1beta2/query.rpc.Query";
-import * as _311 from "./cert/v1beta2/query.rpc.Query";
-import * as _312 from "./deployment/v1beta1/query.rpc.Query";
-import * as _313 from "./deployment/v1beta2/query.rpc.Query";
-import * as _314 from "./escrow/v1beta1/query.rpc.Query";
-import * as _315 from "./escrow/v1beta2/query.rpc.Query";
-import * as _316 from "./market/v1beta2/query.rpc.Query";
-import * as _317 from "./provider/v1beta2/query.rpc.Query";
-import * as _318 from "./audit/v1beta1/audit.rpc.msg";
-import * as _319 from "./audit/v1beta2/audit.rpc.msg";
-import * as _320 from "./cert/v1beta2/cert.rpc.msg";
-import * as _321 from "./deployment/v1beta1/deployment.rpc.msg";
-import * as _322 from "./deployment/v1beta2/service.rpc.msg";
-import * as _323 from "./market/v1beta2/service.rpc.msg";
-import * as _324 from "./provider/v1beta1/provider.rpc.msg";
-import * as _325 from "./provider/v1beta2/provider.rpc.msg";
-import * as _495 from "./lcd";
-import * as _496 from "./rpc.query";
-import * as _497 from "./rpc.tx";
+import * as _245 from "./audit/v1beta1/audit.amino";
+import * as _246 from "./audit/v1beta2/audit.amino";
+import * as _247 from "./cert/v1beta2/cert.amino";
+import * as _248 from "./deployment/v1beta1/deployment.amino";
+import * as _249 from "./deployment/v1beta2/service.amino";
+import * as _250 from "./market/v1beta2/service.amino";
+import * as _251 from "./provider/v1beta1/provider.amino";
+import * as _252 from "./provider/v1beta2/provider.amino";
+import * as _253 from "./audit/v1beta1/audit.registry";
+import * as _254 from "./audit/v1beta2/audit.registry";
+import * as _255 from "./cert/v1beta2/cert.registry";
+import * as _256 from "./deployment/v1beta1/deployment.registry";
+import * as _257 from "./deployment/v1beta2/service.registry";
+import * as _258 from "./market/v1beta2/service.registry";
+import * as _259 from "./provider/v1beta1/provider.registry";
+import * as _260 from "./provider/v1beta2/provider.registry";
+import * as _261 from "./audit/v1beta2/query.lcd";
+import * as _262 from "./cert/v1beta2/query.lcd";
+import * as _263 from "./deployment/v1beta1/query.lcd";
+import * as _264 from "./deployment/v1beta2/query.lcd";
+import * as _265 from "./escrow/v1beta1/query.lcd";
+import * as _266 from "./escrow/v1beta2/query.lcd";
+import * as _267 from "./market/v1beta2/query.lcd";
+import * as _268 from "./provider/v1beta2/query.lcd";
+import * as _269 from "./audit/v1beta2/query.rpc.Query";
+import * as _270 from "./cert/v1beta2/query.rpc.Query";
+import * as _271 from "./deployment/v1beta1/query.rpc.Query";
+import * as _272 from "./deployment/v1beta2/query.rpc.Query";
+import * as _273 from "./escrow/v1beta1/query.rpc.Query";
+import * as _274 from "./escrow/v1beta2/query.rpc.Query";
+import * as _275 from "./market/v1beta2/query.rpc.Query";
+import * as _276 from "./provider/v1beta2/query.rpc.Query";
+import * as _277 from "./audit/v1beta1/audit.rpc.msg";
+import * as _278 from "./audit/v1beta2/audit.rpc.msg";
+import * as _279 from "./cert/v1beta2/cert.rpc.msg";
+import * as _280 from "./deployment/v1beta1/deployment.rpc.msg";
+import * as _281 from "./deployment/v1beta2/service.rpc.msg";
+import * as _282 from "./market/v1beta2/service.rpc.msg";
+import * as _283 from "./provider/v1beta1/provider.rpc.msg";
+import * as _284 from "./provider/v1beta2/provider.rpc.msg";
+import * as _438 from "./lcd";
+import * as _439 from "./rpc.query";
+import * as _440 from "./rpc.tx";
 export namespace akash {
   export namespace audit {
     export const v1beta1 = { ..._0,
-      ..._286,
-      ..._294,
-      ..._318
+      ..._245,
+      ..._253,
+      ..._277
     };
     export const v1beta2 = { ..._1,
       ..._2,
       ..._3,
-      ..._287,
-      ..._295,
-      ..._302,
-      ..._310,
-      ..._319
+      ..._246,
+      ..._254,
+      ..._261,
+      ..._269,
+      ..._278
     };
   }
   export namespace base {
@@ -128,11 +128,11 @@ export namespace akash {
     export const v1beta2 = { ..._13,
       ..._14,
       ..._15,
-      ..._288,
-      ..._296,
-      ..._303,
-      ..._311,
-      ..._320
+      ..._247,
+      ..._255,
+      ..._262,
+      ..._270,
+      ..._279
     };
   }
   export namespace deployment {
@@ -142,11 +142,11 @@ export namespace akash {
       ..._19,
       ..._20,
       ..._21,
-      ..._289,
-      ..._297,
-      ..._304,
-      ..._312,
-      ..._321
+      ..._248,
+      ..._256,
+      ..._263,
+      ..._271,
+      ..._280
     };
     export const v1beta2 = { ..._22,
       ..._23,
@@ -160,25 +160,25 @@ export namespace akash {
       ..._31,
       ..._32,
       ..._33,
-      ..._290,
-      ..._298,
-      ..._305,
-      ..._313,
-      ..._322
+      ..._249,
+      ..._257,
+      ..._264,
+      ..._272,
+      ..._281
     };
   }
   export namespace escrow {
     export const v1beta1 = { ..._34,
       ..._35,
       ..._36,
-      ..._306,
-      ..._314
+      ..._265,
+      ..._273
     };
     export const v1beta2 = { ..._37,
       ..._38,
       ..._39,
-      ..._307,
-      ..._315
+      ..._266,
+      ..._274
     };
   }
   export namespace inflation {
@@ -194,31 +194,31 @@ export namespace akash {
       ..._46,
       ..._47,
       ..._48,
-      ..._291,
-      ..._299,
-      ..._308,
-      ..._316,
-      ..._323
+      ..._250,
+      ..._258,
+      ..._267,
+      ..._275,
+      ..._282
     };
   }
   export namespace provider {
     export const v1beta1 = { ..._49,
-      ..._292,
-      ..._300,
-      ..._324
+      ..._251,
+      ..._259,
+      ..._283
     };
     export const v1beta2 = { ..._50,
       ..._51,
       ..._52,
-      ..._293,
-      ..._301,
-      ..._309,
-      ..._317,
-      ..._325
+      ..._252,
+      ..._260,
+      ..._268,
+      ..._276,
+      ..._284
     };
   }
-  export const ClientFactory = { ..._495,
-    ..._496,
-    ..._497
+  export const ClientFactory = { ..._438,
+    ..._439,
+    ..._440
   };
 }

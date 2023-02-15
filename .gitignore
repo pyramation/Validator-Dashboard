@@ -12,7 +12,6 @@ remote-repo/
 coverage/
 dist
 proto
-dist
 .parcel-cache
 .module-cache
 fixtures/dom/public/react-dom.js

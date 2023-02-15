@@ -1,18 +1,18 @@
-import * as _199 from "./mint/genesis";
-import * as _200 from "./mint/mint";
-import * as _201 from "./mint/query";
-import * as _424 from "./mint/query.lcd";
-import * as _425 from "./mint/query.rpc.Query";
-import * as _504 from "./lcd";
-import * as _505 from "./rpc.query";
+import * as _155 from "./mint/genesis";
+import * as _156 from "./mint/mint";
+import * as _157 from "./mint/query";
+import * as _362 from "./mint/query.lcd";
+import * as _363 from "./mint/query.rpc.Query";
+import * as _444 from "./lcd";
+import * as _445 from "./rpc.query";
 export namespace juno {
-  export const mint = { ..._199,
-    ..._200,
-    ..._201,
-    ..._424,
-    ..._425
+  export const mint = { ..._155,
+    ..._156,
+    ..._157,
+    ..._362,
+    ..._363
   };
-  export const ClientFactory = { ..._504,
-    ..._505
+  export const ClientFactory = { ..._444,
+    ..._445
   };
 }
