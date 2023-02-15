@@ -6,6 +6,9 @@ const selectedChainKey = 'selected-chain';
 
 export function useCommission(): number {
   const [commission, setCommission] = useState<number>(0);
+  const [chainName, setChainName] = useState<ChainName | undefined>(
+    window.localStorage.getItem(selectedChainKey) as ChainName
+  );
 
   useEffect(() => {
     const fetchCommission = async (chainName: ChainName): Promise<number> => {
@@ -52,19 +55,31 @@ export function useCommission(): number {
       const chainName = window.localStorage.getItem(selectedChainKey) as ChainName;
       const newcommission = await fetchCommission(chainName);
       setCommission(newcommission);
+      setChainName(chainName);
+    };
+
+    const handleVisibilityChange = async () => {
+      if (!document.hidden) {
+        const chainName = window.localStorage.getItem(selectedChainKey) as ChainName;
+        const newcommission = await fetchCommission(chainName);
+        setCommission(newcommission);
+        setChainName(chainName);
+      }
     };
 
     onStorageChange();
 
     // Set up event listener for changes to selected chain in local storage
-    window.addEventListener('storage', (event) => {
-      if (event.key === selectedChainKey) {
-        onStorageChange();
-      }
-    });
+    window.addEventListener('storage', onStorageChange);
 
-    return () => window.removeEventListener('storage', onStorageChange);
-  }, []);
+    // Set up event listener for page visibility changes
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      window.removeEventListener('storage', onStorageChange);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [chainName]);
 
   return commission;
 }

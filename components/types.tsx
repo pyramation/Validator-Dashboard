@@ -64,6 +64,7 @@ export interface ChangeChainDropdownType {
   selectedItem?: ChainOption;
   onChange: handleSelectChainDropdown;
   chainDropdownLoading?: boolean;
+  onClearSelection?: boolean;
 }
 
 export interface ChangeChainMenuType {

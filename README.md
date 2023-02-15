@@ -7,20 +7,19 @@ An easy to use dashboard for everyday validator actions.
 ### Run locally
 ```
 cd Validator-Dashboard
-npm install
-npm start
+yarn
+yarn dev
 ```
-Open [http://localhost:1234](http://localhost:1234).
+Open [http://localhost:3000](http://localhost:3000).
 
 ### Build for deploying 
 
-After building, you can serve the `dist` folder
+After building, you can serve the .next/static folder with vercel or serve
 
 ```
-cd package_code
-npm install
-npm run build
-serve -s dist
+cd Validator-Dashboard
+yarn
+yarn build
 ```
 
 ## To-Do list & Disclaimer
@@ -30,9 +29,9 @@ This frontend is in early development stages and will be changing over time **US
 
 ### To-Do
 
-- [ ] Rename Front-End components so they make sense
-- [ ] Finish Front-End design
-- [ ] Conceptualize Back-End design
-- [ ] Iterate Back-End desing
-- [ ] Fix the background color
-- [ ] Figure out if chain-select will work with keplr connect like in my notes
+- [X] Finish Front-End design
+- [X] Conceptualize Back-End design
+- [ ] Fix the API call for commission amounts
+- [ ] Import the [governance code from cosmology](https://github.com/cosmology-tech/cosmos-kit/blob/main/packages/example/pages/gov.tsx) then iterate
+- [ ] Copy Pasta commission API calls for staking
+- [ ] Is acquring the validator address a msg type?

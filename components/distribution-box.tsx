@@ -2,11 +2,13 @@ import { SetStateAction, useEffect, useState } from 'react';
 import { Box, Button, ButtonGroup, Center, Container, Flex, Heading, Link, Stack, StackDivider, Stat, StatHelpText, StatLabel, StatNumber } from '@chakra-ui/react';
 import { Card, CardHeader, CardBody, CardFooter } from '@chakra-ui/react';
 import { useCommission } from './queries/commission-query';
+import { useToken } from './queries/token-query';
 
 export default function DistributionBox() {
   const [activeButton, setActiveButton] = useState('commission');
   const [commission, setCommission] = useState<number | undefined>();
   const commissionValue = useCommission();
+  const token = useToken();
 
   useEffect(() => {
     setCommission(commissionValue);
@@ -41,7 +43,7 @@ export default function DistributionBox() {
                         </Heading>
                         <Stat>
                           <StatNumber>{commission}</StatNumber>
-                          <StatHelpText>OSMO</StatHelpText>
+                          <StatHelpText>{token}</StatHelpText>
                         </Stat>
                       </Box>
                       <Box>
