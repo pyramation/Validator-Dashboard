@@ -119,21 +119,29 @@ export default function DistributionBox() {
                   <Stack divider={<StackDivider />} spacing='4'>
                     <Box>
                       <Heading size='xs' textTransform='uppercase'>
-                        Jail Duration
+                        Missed Blocks
                       </Heading>
                       <Stat>
-                        <text>{missedBlocks}</text>
+                      <StatNumber>{missedBlocks}</StatNumber>
                         <StatHelpText>Blocks</StatHelpText>
                       </Stat>
                     </Box>
                     <Box>
                       <Heading size='xs' textTransform='uppercase'>
-                        Validator Address
+                        Jail Status
                       </Heading>
-                      <text>
-                        Chandra Station
-                        (osmovaloper69420abc123easyasdoreme69)
-                      </text>
+                      <Stat>
+                      <StatNumber>false</StatNumber>
+                      </Stat>
+                    </Box>
+                    <Box>
+                      <Heading size='xs' textTransform='uppercase'>
+                        Validator
+                      </Heading>
+                      <Stat>
+                      <StatNumber>{moniker}</StatNumber>
+                      <StatHelpText>{details}</StatHelpText>
+                      </Stat>
                     </Box>
                     <Box>
                       <Button colorScheme="teal" variant="outline" alignContent="center" >

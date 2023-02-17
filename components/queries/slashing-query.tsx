@@ -10,7 +10,7 @@ export function useMissedBlocksCounter(): number {
   const [chainName, setChainName] = useState<ChainName | undefined>();
 
   useEffect(() => {
-    async function fetchMissedBlocksCounter(chainName: ChainName): Promise<number> {
+    async function fetchMissedBlocksCounter(chainName: ChainName): Promise<Long> {
       if (chainName !== 'akash' && chainName !== 'osmosis') {
         throw new Error(`Unsupported chain: ${chainName}`);
       }
@@ -31,7 +31,7 @@ export function useMissedBlocksCounter(): number {
 
       const consAddress = await getValconsAddress()
       const data = await client.cosmos.slashing.v1beta1.signingInfo({
-          consAddress: 'akashvalconspub1wh2mmlp5lyle64lv0twvctdhz6eftxyh5rxyv3'
+          consAddress: 'akashvalcons1pf07pjzznxxkrhm3u5vs9qqglux305ny8nsl6e'
       })
 
       const missedBlocksCounter = data.val_signing_info?.missed_blocks_counter;
@@ -39,7 +39,7 @@ export function useMissedBlocksCounter(): number {
         throw new Error('Missed blocks counter not found');
       }
 
-      return missedBlocksCounter.toNumber();
+      return missedBlocksCounter;
     }
 
     const updateMissedBlocks = async () => {
