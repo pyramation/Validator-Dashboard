@@ -210,6 +210,7 @@ export interface QueryDelegationTotalRewardsResponse {
  */
 
 export interface QueryDelegationTotalRewardsResponseSDKType {
+  commission: any;
   rewards: DelegationDelegatorRewardSDKType[];
   total: DecCoinSDKType[];
 }

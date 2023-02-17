@@ -7,7 +7,6 @@ const selectedChainKey = 'selected-chain';
 export function useCommission(): number {
   const [commission, setCommission] = useState<number>(0);
   const [chainName, setChainName] = useState<ChainName | undefined>(
-    window.localStorage.getItem(selectedChainKey) as ChainName
   );
 
   useEffect(() => {
@@ -32,7 +31,7 @@ export function useCommission(): number {
             restEndpoint: 'https://osmosis.api.chandrastation.com'
           });
           denom = 'uosmo';
-          validatorAddress = 'osmovaloper10ymws40tepmjcu3a2wuy266ddna4ktas0zuzm4';
+          validatorAddress = 'osmovaloper1hjct6q7npsspsg3dgvzk3sdf89spmlpf6t4agt';
           break;
       }
 
@@ -47,39 +46,42 @@ export function useCommission(): number {
       }
 
       const roundedCommission = Math.round(Number(amount)) / 100;
-      const roundedAmount = Math.round(roundedCommission) / 100;
-      return roundedAmount / 100;
+      const roundedAmount = Math.round(roundedCommission) / 10000;
+      return Number(roundedAmount.toFixed(2));
     };
 
-    const onStorageChange = async () => {
-      const chainName = window.localStorage.getItem(selectedChainKey) as ChainName;
-      const newcommission = await fetchCommission(chainName);
-      setCommission(newcommission);
+    const updateCommission = async () => {
+      window.addEventListener("keplr_keystorechange", () => {
+        const chainName = window.localStorage.getItem('selected-chain') as ChainName;
+        fetchCommission(chainName).then(newCommission => {
+          setCommission(newCommission);
+          setChainName(chainName);
+        });
+      });
+    
+      const chainName = window.localStorage.getItem('selected-chain') as ChainName;
+      const newCommission = await fetchCommission(chainName);
+      setCommission(newCommission);
       setChainName(chainName);
     };
 
-    const handleVisibilityChange = async () => {
-      if (!document.hidden) {
-        const chainName = window.localStorage.getItem(selectedChainKey) as ChainName;
-        const newcommission = await fetchCommission(chainName);
-        setCommission(newcommission);
-        setChainName(chainName);
-      }
-    };
-
-    onStorageChange();
+    updateCommission();
 
     // Set up event listener for changes to selected chain in local storage
-    window.addEventListener('storage', onStorageChange);
+    window.addEventListener('storage', updateCommission);
 
-    // Set up event listener for page visibility changes
-    document.addEventListener('visibilitychange', handleVisibilityChange);
+    // Set up event listener for window focus
+    window.addEventListener('focus', updateCommission);
+
+    // Set up event listener for Keplr's keystore change event
+    window.addEventListener('keplr_keystorechange', updateCommission);
 
     return () => {
-      window.removeEventListener('storage', onStorageChange);
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('storage', updateCommission);
+      window.removeEventListener('focus', updateCommission);
+      window.removeEventListener('keplr_keystorechange', updateCommission);
     };
-  }, [chainName]);
+  }, []);
 
   return commission;
 }

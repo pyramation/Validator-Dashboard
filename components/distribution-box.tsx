@@ -3,13 +3,22 @@ import { Box, Button, ButtonGroup, Center, Container, Flex, Heading, Link, Stack
 import { Card, CardHeader, CardBody, CardFooter } from '@chakra-ui/react';
 import { useCommission } from './queries/commission-query';
 import { useToken } from './queries/token-query';
+import { useValoper } from './queries/validator-query'
+import { useDetails } from './queries/validator-query';
+import { useReward } from './queries/staking-query';
+import { fetchMissedBlocksCounter } from './queries/slashing-query'
+
 
 export default function DistributionBox() {
   const [activeButton, setActiveButton] = useState('commission');
   const [commission, setCommission] = useState<number | undefined>();
   const commissionValue = useCommission();
   const token = useToken();
-
+  const moniker = useValoper();
+  const details = useDetails();
+  const stakingRewards = useReward();
+/*   const missedBlocks = fetchMissedBlocksCounter();
+ */
   useEffect(() => {
     setCommission(commissionValue);
   }, [commissionValue]);
@@ -48,12 +57,12 @@ export default function DistributionBox() {
                       </Box>
                       <Box>
                         <Heading size='xs' textTransform='uppercase'>
-                          Validator Address
+                          Validator
                         </Heading>
-                        <text>
-                          Chandra Station
-                          (osmovaloper69420abc123easyasdoreme69)
-                        </text>
+                        <Stat>
+                        <StatNumber>{moniker}</StatNumber>
+                          <StatHelpText>{details}</StatHelpText>
+                        </Stat>
                       </Box>
                       <Box>
                         <Button colorScheme="teal" variant="outline" alignContent="center" >
@@ -78,8 +87,8 @@ export default function DistributionBox() {
                         Claimmable Amount
                       </Heading>
                       <Stat>
-                        <StatNumber>120</StatNumber>
-                        <StatHelpText>OSMO</StatHelpText>
+                        <StatNumber>{stakingRewards}</StatNumber>
+                        <StatHelpText>{token}</StatHelpText>
                       </Stat>
                     </Box>
                     <Box>
@@ -87,7 +96,7 @@ export default function DistributionBox() {
                         Validator Address
                       </Heading>
                       <text>
-                        Claiming from all your delegations.
+                        Claiming your rewards from your delegations to all validators.
                       </text>
                     </Box>
                     <Box>
@@ -113,7 +122,7 @@ export default function DistributionBox() {
                         Jail Duration
                       </Heading>
                       <Stat>
-                        <StatNumber>1,200</StatNumber>
+                        <StatNumber>{/* missedBlocks */}</StatNumber>
                         <StatHelpText>Blocks</StatHelpText>
                       </Stat>
                     </Box>
