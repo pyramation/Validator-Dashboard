@@ -6,7 +6,7 @@ import { useToken } from './queries/token-query';
 import { useValoper } from './queries/validator-query'
 import { useDetails } from './queries/validator-query';
 import { useReward } from './queries/staking-query';
-import { fetchMissedBlocksCounter } from './queries/slashing-query'
+import { useMissedBlocksCounter } from './queries/slashing-query'
 
 
 export default function DistributionBox() {
@@ -17,8 +17,8 @@ export default function DistributionBox() {
   const moniker = useValoper();
   const details = useDetails();
   const stakingRewards = useReward();
-/*   const missedBlocks = fetchMissedBlocksCounter();
- */
+  const missedBlocks = useMissedBlocksCounter();
+
   useEffect(() => {
     setCommission(commissionValue);
   }, [commissionValue]);
@@ -122,7 +122,7 @@ export default function DistributionBox() {
                         Jail Duration
                       </Heading>
                       <Stat>
-                        <StatNumber>{/* missedBlocks */}</StatNumber>
+                        <text>{missedBlocks}</text>
                         <StatHelpText>Blocks</StatHelpText>
                       </Stat>
                     </Box>
