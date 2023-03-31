@@ -53,9 +53,9 @@ export const WalletSection = () => {
   );
 
   return (
-    <Center py={4}>
+    <Center py={16}>
       <Grid
-        w="300px"
+        w="full"
         maxW="sm"
         templateColumns="1fr"
         rowGap={4}

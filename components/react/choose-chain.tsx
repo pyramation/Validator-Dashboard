@@ -23,16 +23,8 @@ export function ChooseChain({
       );
     if (!chainName) setSelectedItem(undefined);
   }, [chainInfos, chainName]);
-
-  const handleClearSelection = () => {
-    setSelectedItem(undefined);
-    onChange(null);
-    window.localStorage.setItem('selected-chain', 'cosmoshub-4');
-  }
-
   return (
     <ChangeChainDropdown
-      key={chainName}
       data={chainInfos}
       selectedItem={selectedItem}
       onChange={onChange}

@@ -3,7 +3,7 @@ import { akash, osmosis } from '../../codegen';
 import { useEffect, useState } from 'react';
 import { useChain } from '@cosmos-kit/react';
 
-const selectedChainKey = 'selected-chain';
+export const selectedChainKey = 'selected-chain';
 
 export function useReward(): number {
   const chainName = window.localStorage.getItem(selectedChainKey) as ChainName;

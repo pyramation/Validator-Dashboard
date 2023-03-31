@@ -49,7 +49,7 @@ const SelectOptions = ({ data, value, onChange }: ChangeChainMenuType) => {
       h: menuHeight,
       mt: 4,
       mb: 0,
-      bg: useColorModeValue('white', 'gray.900'),
+      bg: useColorModeValue('white', 'black'),
       boxShadow: useColorModeValue('0 1px 5px #e3e3e3', '0 0px 4px #4b4b4b'),
       borderRadius: '0.3rem'
     }),

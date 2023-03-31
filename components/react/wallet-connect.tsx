@@ -14,17 +14,23 @@ export const ConnectWalletButton = ({
 }: ConnectWalletType) => {
   return (
     <Button
-      colorScheme="teal"
-      variant="outline"
-      w="full"
+      w="200px"
       minW="fit-content"
-      size="sm"
+      size="lg"
       isLoading={isLoading}
       isDisabled={isDisabled}
+      bgImage="linear-gradient(109.6deg, #5EB7C8 11.2%, #3A8E9E 83.1%)"
+      color="white"
       opacity={1}
       transition="all .5s ease-in-out"
+      _hover={{
+        bgImage:
+          'linear-gradient(109.6deg, #2C7686 11.2%, #1E5D67 83.1%)',
+        opacity: 0.75
+      }}
       _active={{
-        colorScheme: "teal",
+        bgImage:
+          'linear-gradient(109.6deg, #7ACED4 11.2%, #9ED7DC 83.1%)',
         opacity: 0.9
       }}
       onClick={onClickConnectBtn}
@@ -84,7 +90,7 @@ export const Rejected = ({
       {wordOfWarning && (
         <Stack
           isInline={true}
-          borderRadius="none"
+          borderRadius="md"
           bg={bg}
           color="blackAlpha.900"
           p={4}
@@ -124,7 +130,7 @@ export const Error = ({
       {wordOfWarning && (
         <Stack
           isInline={true}
-          borderRadius="none"
+          borderRadius="md"
           bg={bg}
           color="blackAlpha.900"
           p={4}
