@@ -1,10 +1,22 @@
 import { extendTheme } from '@chakra-ui/react';
 
+const config = {
+  initialColorMode: 'light',
+  useSystemColorMode: false,
+};
+
 export const defaultThemeObject = {
+  config,
   fonts: {
-    body: '',
-    heading: 'Futura'
+    body: 'Futura',
+    heading: 'Futura MD BT'
   },
+  styles: {
+    global: (props: { colorMode: string; }) => ({
+      body: {
+        bg: props.colorMode === 'dark' ? 'black' : 'white',
+        color: props.colorMode === 'dark' ? 'white' : 'black',
+      },
   colors: {
     primary: {
       '50': '#e5e7f9',
@@ -28,6 +40,9 @@ export const defaultThemeObject = {
   },
   shadows: {
     largeSoft: 'rgba(60, 64, 67, 0.15) 0px 2px 10px 6px;'
+  }
+      }
+    )
   }
 };
 

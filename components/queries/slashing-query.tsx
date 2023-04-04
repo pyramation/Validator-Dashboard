@@ -29,9 +29,11 @@ export function useMissedBlocksCounter(): number {
           break;
       }
 
-      const consAddress = await getValconsAddress()
+      const valconsAddress = await getValconsAddress(chainName || "akash")
+      console.log(valconsAddress)
+
       const data = await client.cosmos.slashing.v1beta1.signingInfo({
-          consAddress: 'akashvalcons1pf07pjzznxxkrhm3u5vs9qqglux305ny8nsl6e'
+          consAddress: valconsAddress
       })
 
       const missedBlocksCounter = data.val_signing_info?.missed_blocks_counter;

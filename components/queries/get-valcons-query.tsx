@@ -1,23 +1,26 @@
-import * as bech32 from 'bech32';
-import { akash } from '../../codegen';
-import * as CryptoJS from 'crypto-js'
+import { fromBech32, toBech32, fromBase64, toHex, fromHex,  } from '@cosmjs/encoding';
+import { useValoper } from './validator-query';
+import { chains } from 'chain-registry';
+import { sha256, stringToPath } from '@cosmjs/crypto'
 
-export async function getValconsAddress(): Promise<string> {
-  const client = await akash.ClientFactory.createLCDClient({
-    restEndpoint: 'https://akash.api.chandrastation.com'
-  });
-  const operatorAddress = 'akashvaloper1thl5syhmscgnj7whdyrydw3w6vy800444lk8r5'
-  const response = await client.cosmos.staking.v1beta1.validator({
-    validatorAddr: operatorAddress
-  });
-  const consensusPubkeyAny = response.validator?.consensus_pubkey;
-  const consensusPubkeyBytes = new Uint8Array(consensusPubkeyAny!.value);
-  const decoded = Buffer.from(consensusPubkeyBytes).toString('base64');
+export async function getValconsAddress(chainName: string | undefined): Promise<string> {
+  const valoperAddress = useValoper();
+  const response = await fetch(`https://akash.api.chandrastation.com/cosmos/staking/v1beta1/validators/akashvaloper1qvsus5qg8yhre7k2c78xkkw4nvqqgev7zw5wzs`);
+  const { validator } = await response.json();
+  const consensusPubkeyBase64 = validator?.consensus_pubkey?.key;
+  if (!consensusPubkeyBase64) {
+    throw new Error('Consensus pubkey not found');
+  }
+  const chainInfo = chains.find(({ chain_name }) => chain_name === chainName);
+  if (!chainInfo) {
+    throw new Error('Chain not found');
+  }
+  const bech32Prefix = chainInfo.bech32_prefix;
+  const valconsPrefix = bech32Prefix + 'valcons';
 
-  const bytes = CryptoJS.enc.Base64.parse(decoded);
-  const valconsPrefix: string = 'akashvalcons';
-  const valconsWords: number[] = bech32.toWords(Array.from(new Uint8Array(bytes.words)));
-  const valconsAddress: string = bech32.encode(valconsPrefix, valconsWords);
+  const addressData = sha256(fromBase64(consensusPubkeyBase64)).slice(0,20)
+
+  const valconsAddress = toBech32(valconsPrefix, addressData);
 
   return valconsAddress;
 }

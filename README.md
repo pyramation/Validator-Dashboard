@@ -1,76 +1,46 @@
-This is a Cosmos App project bootstrapped with [`create-cosmos-app`](https://github.com/cosmology-tech/create-cosmos-app).
+Functionally of the UI/UX is primarily finished. 
 
-## Getting Started
+What remains to be added is as follows
 
-First, install the packages and run the development server:
+1. Managment tab : create/edit commands and their parameters. Deploy, akash tie in. 
 
-```bash
-yarn && yarn dev
+For deploy i need to figure out how to generate a priv key client side only and then allow the user to use the publick key from validator_priv_key to sign the create command. 
+
+chainName confusion is sort of solved but this requires a complete rehaul of the distribution/governance box functionality. 
+
+Biggest issue right now is how do i ensure they arent rendered the entire time but only when the user clicks the render respective button. 
+
+```
+  return (
+    <Box w="full" h="full" minH={minHeight}>
+      <SimpleLayout
+        logo={logo}
+        copyAddressButton={addressButton}
+        userInfo={userInfo}
+        chainDropdown={chooseChain}
+        connectWalletButton={connectWalletButton}
+        isFullWidth={false}
+        children={undefined}
+      ></SimpleLayout>
+    </Box>
+  );
+}
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+I think the solution is to render the selectable buttons within the return then i can use the buttons to call the components on click.
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+chain name solution was solved by passing it as a prop to the functions then rendering them in the return in the index file. Can look into context instead but this seems to work. But rendering them in the return in order for them to update is causing me to rehaul basically everything. 
 
-## Learn More 
+### Finished
+* Valoper 
+* Valcons
+* ChainName
 
-### Chain Registry
-
-The npm package for the Official Cosmos chain registry. Get chain and token data for you application.
-
-* https://github.com/cosmology-tech/chain-registry
-
-### Cosmology Videos
-
-Checkout more videos for how to use various frontend tooling in the Cosmos!
-
-* https://cosmology.tech/learn
-
-### Cosmos Kit
-
-A wallet connector for the Cosmos ⚛️
-
-* https://github.com/cosmology-tech/cosmos-kit
-
-### Telescope
-
-A "babel for the Cosmos", Telescope is a TypeScript Transpiler for Cosmos Protobufs. Telescope is used to generate libraries for Cosmos blockchains. Simply point to your protobuffer files and create developer-friendly Typescript libraries for teams to build on your blockchain.
-
-* https://github.com/osmosis-labs/telescope
-
-🎥 [Checkout the Telescope video playlist](https://www.youtube.com/watch?v=n82MsLe82mk&list=PL-lMkVv7GZwyQaK6bp6kMdOS5mzosxytC) to learn how to use `telescope`!
-
-### CosmWasm TS Codegen
-
-The quickest and easiest way to interact with CosmWasm Contracts. @cosmwasm/ts-codegen converts your CosmWasm smart contracts into dev-friendly TypeScript classes so you can focus on shipping code.
-
-* https://github.com/CosmWasm/ts-codegen
-
-🎥 [Checkout the CosmWasm/ts-codegne video playlist](https://www.youtube.com/watch?v=D_A5V2PfNLA&list=PL-lMkVv7GZwz1KO3jANwr5W4MoziruXwK) to learn how to use `ts-codegen`!
-
-
-## Learn More about Next.js
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
-
-## Credits
-
-🛠 Built by Cosmology — if you like our tools, please consider delegating to [our validator ⚛️](https://cosmology.tech/validator)
-
-Code built with the help of these related projects:
-
-* [@cosmwasm/ts-codegen](https://github.com/CosmWasm/ts-codegen) for generated CosmWasm contract Typescript classes
-* [@osmonauts/telescope](https://github.com/osmosis-labs/telescope) a "babel for the Cosmos", Telescope is a TypeScript Transpiler for Cosmos Protobufs.
-* [chain-registry](https://github.com/cosmology-tech/chain-registry) Cosmos chain registry and chain info.
-* [cosmos-kit](https://github.com/cosmology-tech/cosmos-kit) A wallet connector for the Cosmos.
+### Pending
+* Distribution/Governance Box Rehaul
+* Onclick button render for new simpleLayout Items
+* Fix/complete all queries
+* Creating Transactions for each box subset
+* Build manager box
+* Build Create/Edit UI
+* Build deploy 1 click

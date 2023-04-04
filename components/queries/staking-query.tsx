@@ -6,8 +6,9 @@ import { useChain } from '@cosmos-kit/react';
 export const selectedChainKey = 'selected-chain';
 
 export function useReward(): number {
-  const chainName = window.localStorage.getItem(selectedChainKey) as ChainName;
-  const { address } = useChain(chainName);
+  const [chainName, setChainName] = useState<ChainName | undefined>(
+    "cosmoshub"
+  );  const { address } = useChain(chainName || "");
   const [stakingRewards, setStakingRewards] = useState<number>(0);
   
   useEffect(() => {

@@ -11,6 +11,7 @@ import {
     ModalCloseButton,
     ModalBody,
     useColorMode,
+    Heading,
   } from "@chakra-ui/react";
   import { InfoOutlineIcon } from "@chakra-ui/icons";
   import { useState } from "react";
@@ -21,7 +22,7 @@ import {
     const { colorMode } = useColorMode();
   
     return (
-      <Center py={400} h="100%" w="100%">
+      <Center py={200} h="100%" w="100%">
         <Box
           alignItems="center"
           justifyContent="start"
@@ -36,15 +37,21 @@ import {
             icon={<InfoOutlineIcon />}
             aria-label="Open Info Modal"
             position="absolute"
-            top={2}
-            right={2}
+            top={0}
+            right={-2}
             display={isButtonVisible ? "block" : "none"}
             onClick={onOpen}
           />
-          <Text fontSize="4xl" fontWeight="bold" textAlign="center">
+          <Heading 
+          as="h1"
+          fontFamily="Futura MD BT"
+          lineHeight="1.36"
+          fontWeight="medium"
+          letterSpacing="0.1em"
+          fontSize="4xl" textAlign="center">
             Validator Dashboard by Chandra Station
-          </Text>
-          <Text fontSize="3xl" textAlign="center">
+          </Heading>
+          <Text pt={4} fontSize="3xl" textAlign="center">
             A dashboard built to help you manage your validator without the cli.
           </Text>
         </Box>

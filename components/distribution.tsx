@@ -18,16 +18,23 @@ import {
 } from "@chakra-ui/react";
 import { Card, CardHeader, CardBody, CardFooter } from "@chakra-ui/react";
 import { useCommission } from "./queries/commission-query";
+import { CommissionFetcher } from "./queries/working-commission-query";
 import { useToken } from "./queries/token-query";
 import { useValoper } from "./queries/validator-query";
 import { useDetails } from "./queries/validator-query";
 import { useMissedBlocksCounter } from "./queries/slashing-query";
 import { useReward } from "./queries/staking-query";
+import { ChainName } from "@cosmos-kit/core";
 
-export default function DistributionBox() {
+interface DistributionBoxComponentProps {
+  chainName: ChainName | undefined;
+  valoperAddress: string;
+}
+
+export default function DistributionBox({ chainName, valoperAddress }: DistributionBoxComponentProps) {
   const [activeButton, setActiveButton] = useState("commission");
   const [commission, setCommission] = useState<number | undefined>();
-  const commissionValue = useCommission();
+  const commissionValue = CommissionFetcher(valoperAddress);
   const token = useToken();
   const moniker = useValoper();
   const details = useDetails();
@@ -35,9 +42,7 @@ export default function DistributionBox() {
 
   const missedBlocks = useMissedBlocksCounter();
 
-  useEffect(() => {
-    setCommission(commissionValue);
-  }, [commissionValue]);
+  console.log('distribution',valoperAddress)
 
   const handleButtonClick = (button: SetStateAction<string>) => {
     setActiveButton(button);

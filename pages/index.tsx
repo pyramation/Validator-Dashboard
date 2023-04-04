@@ -17,6 +17,7 @@ import {
   useColorModeValue,
   useDisclosure,
   VStack,
+  Heading,
 } from "@chakra-ui/react";
 import { ChainName } from "@cosmos-kit/core";
 import { useChain, useManager } from "@cosmos-kit/react";
@@ -54,6 +55,8 @@ import {
 import DistributionBox from "../components/distribution";
 import GovernanceBox from "../components/governance";
 import Home from "../components/home";
+import { GetValoper, ValoperAddressComponent, useValoperAddress } from "../components/queries/get-valoper";
+import { getValconsAddress } from "../components/queries/get-valcons-query";
 
 type IconTypeProps = string | IconType | JSX.Element | React.ReactNode | any;
 type DefaultLinkItemType = {
@@ -310,6 +313,8 @@ const MobileMenu = ({
   );
 };
 
+
+
 const DesktopMenu = ({
   logo,
   userInfo,
@@ -333,6 +338,18 @@ const DesktopMenu = ({
   const handleButtonClick = (component: React.ComponentType | null) => {
     setSelectedComponent(() => component);
   };
+
+  const [chainName, setChainName] = useState<ChainName | undefined>(
+    "cosmoshub"
+  );
+
+
+  useEffect(() => {
+    setChainName(window.localStorage.getItem("selected-chain") || "cosmoshub");
+  }, []);
+
+
+  const { connect, openView, status, username, address, message, wallet } = useChain(chainName || "akash");
 
   return (
     <Flex>
@@ -420,7 +437,7 @@ const DesktopMenu = ({
               <Button
                 colorScheme={colorMode === "dark" ? "black" : "white"}
                 variant="ghost"
-                onClick={() => handleButtonClick(() => <DistributionBox />)}
+                onClick={() => handleButtonClick(() => <DistributionBox chainName={chainName} />)}
                 fontSize="xl"
                 _hover={{
                   textDecoration: "underline",
@@ -432,7 +449,22 @@ const DesktopMenu = ({
             </VStack>
           </ButtonGroup>
         </Stack>
-        <Box px={4} mx="auto" w="full" maxW={300} py={4}>
+        <Box px={4} mx="auto" w="full" maxW={300} py={-4}>
+          <WalletCardSection chainName={chainName || "cosmoshub"}/>
+        </Box>
+        {copyAddressButton && (
+              <Center
+              pl={9}
+                justifyContent="center"
+                alignItems="center"
+                w="full"
+                maxW="fit-content"
+                minW="fit-content"
+              >
+                {copyAddressButton}
+              </Center>
+            )}
+        <Box pl={5} mx="auto" w="full" maxW={300} py={4}>
           {connectWalletButton}
         </Box>
       </Stack>
@@ -457,9 +489,15 @@ const DesktopMenu = ({
           alignItems="center"
         >
           <Box>
-            <Text fontWeight="bold" fontSize="4xl">
+            <Heading 
+            as="h1"
+            fontFamily="Futura MD BT"
+            lineHeight="1.36"
+            fontWeight="medium"
+            letterSpacing="0.1em"
+            fontSize="4xl">
               Validator Dashboard
-            </Text>
+            </Heading>
           </Box>
           <Stack
             width="auto"
@@ -567,7 +605,7 @@ const SimpleLayout = ({
   chainDropdown,
   isFullWidth,
   connectWalletButton,
-  children,
+  children
 }: SimpleLayoutType) => {
   const { toggleColorMode } = useColorMode();
 
@@ -653,6 +691,7 @@ export default function () {
     />
   );
 
+  const valoperAddress = useValoperAddress(chainName);
 
   const Error = ({
     buttonText,
@@ -690,6 +729,10 @@ export default function () {
       walletStatus={status}
       connected={<ConnectedShowAddress address={address} isLoading={false} />}
     />
+  );
+
+  const distributionBox = (
+    <DistributionBox chainName={chainName} valoperAddress={valoperAddress} />
   );
 
   const connectWalletButton = (

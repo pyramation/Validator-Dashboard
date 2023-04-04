@@ -4,6 +4,7 @@ import {
   GridItem,
   Icon,
   Stack,
+  useColorMode,
   useColorModeValue,
 } from "@chakra-ui/react";
 import { MouseEventHandler, useEffect } from "react";
@@ -24,7 +25,8 @@ import {
   WalletConnectComponent,
 } from ".";
 
-export const WalletCardSection = ({ chainName }: { chainName: string }) => {
+
+export const WalletCardSection = ({ chainName, }: { chainName: string }) => {
   const { connect, openView, status, username, address, message, wallet } =
     useChain(chainName);
 
@@ -40,23 +42,6 @@ export const WalletCardSection = ({ chainName }: { chainName: string }) => {
   };
 
   // Components
-  const connectWalletButton = (
-    <WalletConnectComponent
-      walletStatus={status}
-      disconnect={
-        <Disconnected buttonText="Connect Wallet" onClick={onClickConnect} />
-      }
-      connecting={<Connecting />}
-      connected={
-        <Connected buttonText={"My Wallet"} onClick={onClickOpenView} />
-      }
-      rejected={<Rejected buttonText="Reconnect" onClick={onClickConnect} />}
-      error={<Error buttonText="Change Wallet" onClick={onClickOpenView} />}
-      notExist={
-        <NotExist buttonText="Install Wallet" onClick={onClickOpenView} />
-      }
-    />
-  );
 
   const connectWalletWarn = (
     <ConnectStatusWarn
@@ -86,6 +71,8 @@ export const WalletCardSection = ({ chainName }: { chainName: string }) => {
     />
   );
 
+  const { colorMode } = useColorMode();
+
   return (
     <>
       {connectWalletWarn && <GridItem>{connectWalletWarn}</GridItem>}
@@ -94,7 +81,7 @@ export const WalletCardSection = ({ chainName }: { chainName: string }) => {
           justifyContent="center"
           alignItems="center"
           borderRadius="lg"
-          bg={useColorModeValue("white", "blackAlpha.400")}
+          bg={colorMode === "dark" ? "rgba(0, 0, 0, 0.9)" : "white"}
           boxShadow={useColorModeValue(
             "0 0 2px #dfdfdf, 0 0 6px -2px #d3d3d3",
             "0 0 2px #363636, 0 0 8px -2px #4f4f4f"
@@ -104,11 +91,10 @@ export const WalletCardSection = ({ chainName }: { chainName: string }) => {
           py={{ base: 6, md: 12 }}
         >
           {userInfo}
-          {addressBtn}
-          <Box w="full" maxW={{ base: 52, md: 64 }}>
-            {connectWalletButton}
-          </Box>
+
         </Stack>
+        <Box pt={4}>
+        </Box>
       </GridItem>
     </>
   );
