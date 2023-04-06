@@ -58,6 +58,7 @@ import Home from "../components/home";
 import { ValoperAddressComponent, useValoperAddress } from "../components/queries/get-valoper";
 import { getValconsAddress } from "../components/queries/get-valcons-query";
 import { CommissionFetcher } from "../components/queries/working-commission-query";
+import { useValidatorData } from "../components/queries/validator-query";
 
 type IconTypeProps = string | IconType | JSX.Element | React.ReactNode | any;
 type DefaultLinkItemType = {
@@ -339,7 +340,7 @@ const DesktopMenu = ({
     setSelectedComponent(component);
   };
   const [chainName, setChainName] = useState<ChainName | undefined>(
-    "cosmoshub"
+    "akash"
   );
   const { chainRecords, getChainLogo } = useManager();
 
@@ -380,9 +381,10 @@ const DesktopMenu = ({
   );
 
   const valoperAddress = useValoperAddress(chainName);
-  console.log('Index:', valoperAddress)
+
   const commissionValue = CommissionFetcher(chainName);
-  console.log('Index:', commissionValue)
+
+  const validatorInfo = useValidatorData(chainName);
 
   const Error = ({
     buttonText,
@@ -398,7 +400,7 @@ const DesktopMenu = ({
   };
 
   const { connect, openView, status, username, address, message, wallet } =
-    useChain(chainName || "cosmoshub");
+    useChain(chainName || "akash");
 
 
   // Events
@@ -420,7 +422,7 @@ const DesktopMenu = ({
   );
 
   const distributionBox = (
-<DistributionBox key={chainName} chainName={chainName} />
+    <DistributionBox key={`distribution-${chainName}`} chainName={chainName} />
   );
 
   const connectWalletBtn = (

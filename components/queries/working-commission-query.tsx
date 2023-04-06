@@ -22,8 +22,6 @@ export function CommissionFetcher(chainName: ChainName): number | undefined {
       const mainDenom = chainInfo?.staking?.staking_tokens?.[0]?.denom; // Get the main denomination for the chain
 
       const url = `${restEndpoint}/cosmos/distribution/v1beta1/validators/${valoperAddress}/commission`;
-      console.log(restEndpoint);
-      console.log(chainName);
 
       try {
         const response = await axios.get(url);
@@ -31,7 +29,6 @@ export function CommissionFetcher(chainName: ChainName): number | undefined {
 
         // Filter commissions by the main denomination
         const mainCommission = data?.commission?.commission.find((commission: { denom: string }) => commission.denom === mainDenom);
-        console.log(mainDenom)
         // Extract the amount from the main commission
         const commissionAmount = mainCommission?.amount;
 
@@ -58,7 +55,6 @@ export function CommissionFetcher(chainName: ChainName): number | undefined {
     }
 
     fetchCommission().then((commission) => {
-      console.log('Fetched commission:', commission);
       setCommission(commission);
     });
   }, [valoperAddress, chainName]);

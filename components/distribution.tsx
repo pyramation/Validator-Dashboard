@@ -19,11 +19,11 @@ import {
 import { Card, CardHeader, CardBody, CardFooter } from "@chakra-ui/react";
 import { CommissionFetcher } from "./queries/working-commission-query";
 import { useToken } from "./queries/token-query";
-import { useValoper } from "./queries/validator-query";
-import { useDetails } from "./queries/validator-query";
+import { useValidatorData } from "./queries/validator-query";
 import { useMissedBlocksCounter } from "./queries/slashing-query";
 import { useReward } from "./queries/staking-query";
 import { ChainName } from "@cosmos-kit/core";
+import { useValoperAddress } from "./queries/get-valoper";
 
 interface DistributionBoxComponentProps {
   chainName: ChainName | undefined;
@@ -34,9 +34,9 @@ export default function DistributionBox({ chainName }: DistributionBoxComponentP
   const [commission, setCommission] = useState<number | undefined>(0);
   const commissionValue = CommissionFetcher(chainName);
   const token = useToken();
-  const moniker = useValoper();
-  const details = useDetails();
+  const validatorInfo = useValidatorData(chainName);
   const reward = useReward();
+  const valoperAddress =useValoperAddress(chainName);
 
   const missedBlocks = useMissedBlocksCounter();
 
@@ -46,6 +46,10 @@ export default function DistributionBox({ chainName }: DistributionBoxComponentP
       setCommission(commissionValue);
     }
   }, [commissionValue, chainName]);
+
+  useEffect(() => {
+    console.log('DsitributionBox', valoperAddress, commissionValue, validatorInfo.moniker, validatorInfo.details);
+  }, [chainName]);
 
   const handleButtonClick = (button: SetStateAction<string>) => {
     setActiveButton(button);
@@ -138,8 +142,8 @@ export default function DistributionBox({ chainName }: DistributionBoxComponentP
                           Validator
                         </Heading>
                         <Stat>
-                          <StatNumber>{moniker}</StatNumber>
-                          <StatHelpText>{details}</StatHelpText>
+                          <StatNumber>{validatorInfo.moniker}</StatNumber>
+                          <StatHelpText>{validatorInfo.details}</StatHelpText>
                         </Stat>
                       </Box>
                       <Box>
@@ -244,8 +248,8 @@ export default function DistributionBox({ chainName }: DistributionBoxComponentP
                           Validator
                         </Heading>
                         <Stat>
-                          <StatNumber>{moniker}</StatNumber>
-                          <StatHelpText>{details}</StatHelpText>
+                          <StatNumber>{validatorInfo.moniker}</StatNumber>
+                          <StatHelpText>{validatorInfo.details}</StatHelpText>
                         </Stat>
                       </Box>
                       <Box>

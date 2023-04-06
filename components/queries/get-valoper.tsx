@@ -35,7 +35,5 @@ export function useValoperAddress(chainName: ChainName | undefined): string {
     updateValoperAddress();
   }, [chainName, address]);
 
-  console.log('valoper function', valoperAddress)
-
   return valoperAddress;
 }
