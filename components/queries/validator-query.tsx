@@ -2,7 +2,6 @@ import { ChainName } from '@cosmos-kit/core';
 import { akash, osmosis } from '../../codegen';
 import { useEffect, useState } from 'react';
 
-const selectedChainKey = 'selected-chain';
 
 export function useValoper(): string {
   const [valoperMoniker, setValoperMoniker] = useState<string>('');
@@ -71,7 +70,8 @@ export function useValoper(): string {
       window.removeEventListener('focus', updateValoperMoniker);
       window.removeEventListener('keplr_keystorechange', updateValoperMoniker);
     };
-  }, []);
+  }
+  , [chainName]);
 
   return valoperMoniker;
 }
@@ -144,6 +144,6 @@ export function useDetails(): string {
         window.removeEventListener('focus', updateDetails);
         window.removeEventListener('keplr_keystorechange', updateDetails);
       };
-    }, []);
+    }, [chainName]);
     return valoperDetails;
   }

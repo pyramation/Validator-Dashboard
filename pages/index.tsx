@@ -55,8 +55,9 @@ import {
 import DistributionBox from "../components/distribution";
 import GovernanceBox from "../components/governance";
 import Home from "../components/home";
-import { GetValoper, ValoperAddressComponent, useValoperAddress } from "../components/queries/get-valoper";
+import { ValoperAddressComponent, useValoperAddress } from "../components/queries/get-valoper";
 import { getValconsAddress } from "../components/queries/get-valcons-query";
+import { CommissionFetcher } from "../components/queries/working-commission-query";
 
 type IconTypeProps = string | IconType | JSX.Element | React.ReactNode | any;
 type DefaultLinkItemType = {
@@ -331,25 +332,116 @@ const DesktopMenu = ({
     <FiMoon opacity={0.6} />,
     <FiSun opacity={0.7} />
   );
-  const [activeButton, setActiveButton] = useState("commission");
 
 
-  const [selectedComponent, setSelectedComponent] = useState(() => Home);
-  const handleButtonClick = (component: React.ComponentType | null) => {
-    setSelectedComponent(() => component);
+  const [selectedComponent, setSelectedComponent] = useState<React.ReactNode>(() => <Home />);
+  const handleButtonClick = (component: React.ReactNode) => {
+    setSelectedComponent(component);
   };
-
   const [chainName, setChainName] = useState<ChainName | undefined>(
     "cosmoshub"
   );
+  const { chainRecords, getChainLogo } = useManager();
 
+  const chainOptions = useMemo(
+    () =>
+      chainRecords.map((chainRecord) => {
+        return {
+          chainName: chainRecord?.name,
+          label: chainRecord?.chain.pretty_name,
+          value: chainRecord?.name,
+          icon: getChainLogo(chainRecord.name),
+        };
+      }),
+    [chainRecords, getChainLogo]
+  );
 
   useEffect(() => {
-    setChainName(window.localStorage.getItem("selected-chain") || "cosmoshub");
+    setChainName(window.localStorage.getItem("selected-chain") || "akash");
   }, []);
 
+  const onChainChange: handleSelectChainDropdown = async (
+    selectedValue: ChainOption | null
+  ) => {
+    setChainName(selectedValue?.chainName);
+    if (selectedValue?.chainName) {
+      window?.localStorage.setItem("selected-chain", selectedValue?.chainName);
+    } else {
+      window?.localStorage.removeItem("selected-chain");
+    }
+  };
 
-  const { connect, openView, status, username, address, message, wallet } = useChain(chainName || "akash");
+  const chooseChain = (
+    <ChooseChain
+      chainName={chainName}
+      chainInfos={chainOptions}
+      onChange={onChainChange}
+    />
+  );
+
+  const valoperAddress = useValoperAddress(chainName);
+  console.log('Index:', valoperAddress)
+  const commissionValue = CommissionFetcher(chainName);
+  console.log('Index:', commissionValue)
+
+  const Error = ({
+    buttonText,
+    wordOfWarning,
+    onClick,
+  }: {
+    buttonText: string;
+    wordOfWarning?: string;
+    onClick: MouseEventHandler<HTMLButtonElement>;
+  }) => {
+    const bg = useColorModeValue("orange.200", "orange.300");
+    // Rest of the Error component
+  };
+
+  const { connect, openView, status, username, address, message, wallet } =
+    useChain(chainName || "cosmoshub");
+
+
+  // Events
+  const onClickConnect: MouseEventHandler = async (e) => {
+    e.preventDefault();
+    await connect();
+  };
+
+  const onClickOpenView: MouseEventHandler = (e) => {
+    e.preventDefault();
+    openView();
+  };
+
+  const addressButton = (
+    <CopyAddressBtn
+      walletStatus={status}
+      connected={<ConnectedShowAddress address={address} isLoading={false} />}
+    />
+  );
+
+  const distributionBox = (
+<DistributionBox key={chainName} chainName={chainName} />
+  );
+
+  const connectWalletBtn = (
+    <WalletConnectComponent
+      walletStatus={status}
+      disconnect={
+        <Disconnected buttonText="Connect Wallet" onClick={onClickConnect} />
+      }
+      connecting={<Connecting />}
+      connected={
+        <Connected buttonText={"My Wallet"} onClick={onClickOpenView} />
+      }
+      rejected={<Rejected buttonText="Reconnect" onClick={onClickConnect} />}
+      error={<Error buttonText="Change Wallet" onClick={onClickOpenView} />}
+      notExist={
+        <NotExist buttonText="Install Wallet" onClick={onClickOpenView} />
+      }
+    />
+  );
+
+
 
   return (
     <Flex>
@@ -413,7 +505,7 @@ const DesktopMenu = ({
               <Button
                 colorScheme={colorMode === "dark" ? "white" : "black"}
                 variant="ghost"
-                onClick={() => handleButtonClick(() => <Home />)}
+                onClick={() => handleButtonClick(<Home />)}
                 fontSize="xl"
                 _hover={{
                   textDecoration: "underline",
@@ -425,7 +517,7 @@ const DesktopMenu = ({
               <Button
                 colorScheme={colorMode === "dark" ? "black" : "white"}
                 variant="ghost"
-                onClick={() => handleButtonClick(() => <GovernanceBox />)}
+                onClick={() => handleButtonClick(<GovernanceBox />)}
                 fontSize="xl"
                 _hover={{
                   textDecoration: "underline",
@@ -437,7 +529,7 @@ const DesktopMenu = ({
               <Button
                 colorScheme={colorMode === "dark" ? "black" : "white"}
                 variant="ghost"
-                onClick={() => handleButtonClick(() => <DistributionBox chainName={chainName} />)}
+                onClick={() => handleButtonClick(distributionBox)}
                 fontSize="xl"
                 _hover={{
                   textDecoration: "underline",
@@ -452,20 +544,11 @@ const DesktopMenu = ({
         <Box px={4} mx="auto" w="full" maxW={300} py={-4}>
           <WalletCardSection chainName={chainName || "cosmoshub"}/>
         </Box>
-        {copyAddressButton && (
-              <Center
-              pl={9}
-                justifyContent="center"
-                alignItems="center"
-                w="full"
-                maxW="fit-content"
-                minW="fit-content"
-              >
-                {copyAddressButton}
-              </Center>
-            )}
+        <Box pl={10} mx="" w="full" maxW={200} py={4}>
+          {addressButton}
+        </Box>
         <Box pl={5} mx="auto" w="full" maxW={300} py={4}>
-          {connectWalletButton}
+          {connectWalletBtn}
         </Box>
       </Stack>
       {/* navbar */}
@@ -507,19 +590,8 @@ const DesktopMenu = ({
             bg={colorMode === "dark" ? "black" : "white"}
             py={4}
           >
-            {copyAddressButton && (
-              <Center
-                justifyContent="center"
-                alignItems="center"
-                w="full"
-                maxW={60}
-                minW="fit-content"
-              >
-                {copyAddressButton}
-              </Center>
-            )}
             <Box w="full" minW={72} maxW={72}>
-              {chainDropdown}
+              {chooseChain}
             </Box>
             <IconButton
               display="flex"
@@ -583,12 +655,12 @@ const DesktopMenu = ({
         }}
       >
 {
-      selectedComponent && (
-        <Box>
-          {React.createElement(selectedComponent)}
-        </Box>
-      )
-    }
+  selectedComponent && (
+    <Box pl={20} alignSelf="center">
+      {selectedComponent}
+    </Box>
+  )
+}
         <Box p={4} bg={colorMode === "dark" ? "black" : "white"}>
           {children}
         </Box>
@@ -757,9 +829,7 @@ export default function () {
     <Box w="full" h="full" minH={minHeight}>
       <SimpleLayout
         logo={logo}
-        copyAddressButton={addressButton}
         userInfo={userInfo}
-        chainDropdown={chooseChain}
         connectWalletButton={connectWalletButton}
         isFullWidth={false}
         children={undefined}

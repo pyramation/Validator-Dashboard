@@ -17,7 +17,6 @@ import {
   useColorMode,
 } from "@chakra-ui/react";
 import { Card, CardHeader, CardBody, CardFooter } from "@chakra-ui/react";
-import { useCommission } from "./queries/commission-query";
 import { CommissionFetcher } from "./queries/working-commission-query";
 import { useToken } from "./queries/token-query";
 import { useValoper } from "./queries/validator-query";
@@ -28,13 +27,12 @@ import { ChainName } from "@cosmos-kit/core";
 
 interface DistributionBoxComponentProps {
   chainName: ChainName | undefined;
-  valoperAddress: string;
 }
 
-export default function DistributionBox({ chainName, valoperAddress }: DistributionBoxComponentProps) {
+export default function DistributionBox({ chainName }: DistributionBoxComponentProps) {
   const [activeButton, setActiveButton] = useState("commission");
-  const [commission, setCommission] = useState<number | undefined>();
-  const commissionValue = CommissionFetcher(valoperAddress);
+  const [commission, setCommission] = useState<number | undefined>(0);
+  const commissionValue = CommissionFetcher(chainName);
   const token = useToken();
   const moniker = useValoper();
   const details = useDetails();
@@ -42,7 +40,12 @@ export default function DistributionBox({ chainName, valoperAddress }: Distribut
 
   const missedBlocks = useMissedBlocksCounter();
 
-  console.log('distribution',valoperAddress)
+
+  useEffect(() => {
+    if (commissionValue !== undefined) {
+      setCommission(commissionValue);
+    }
+  }, [commissionValue, chainName]);
 
   const handleButtonClick = (button: SetStateAction<string>) => {
     setActiveButton(button);
@@ -73,6 +76,7 @@ export default function DistributionBox({ chainName, valoperAddress }: Distribut
               gap="4"
             >
               <Button
+              fontSize="20px"
                 colorScheme={colorMode === "dark" ? "black" : "white"}
                 variant="ghost"
                 onClick={() => handleButtonClick("commission")}
@@ -121,7 +125,7 @@ export default function DistributionBox({ chainName, valoperAddress }: Distribut
                   <CardBody>
                     <Stack divider={<StackDivider />} spacing="4">
                       <Box>
-                        <Heading size="xs" textTransform="uppercase">
+                        <Heading fontFamily="Futura" size="md" >
                           Claimmable Amount
                         </Heading>
                         <Stat>

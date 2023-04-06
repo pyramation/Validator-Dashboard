@@ -1,14 +1,12 @@
 import { ChainName } from '@cosmos-kit/core';
 import { akash, osmosis } from '../../codegen';
 import { useEffect, useState } from 'react';
-import { useValoperAddress } from './get-valoper';
+import ValoperAddress, { useValoperAddress } from './get-valoper';
 
 export function useCommission(): number {
   const [commission, setCommission] = useState<number>(0);
   const [chainName, setChainName] = useState<ChainName | undefined>(
   );
-
-  
 
   useEffect(() => {
     const fetchCommission = async (chainName: ChainName): Promise<number> => {
@@ -35,7 +33,6 @@ export function useCommission(): number {
           validatorAddress = 'osmovaloper1hjct6q7npsspsg3dgvzk3sdf89spmlpf6t4agt';
           break;
       }
-console.log(validatorAddress)
       const data = await client.cosmos.distribution.v1beta1.validatorCommission({
         validatorAddress: validatorAddress
       });
