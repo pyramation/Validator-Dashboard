@@ -55,7 +55,7 @@ import {
 import DistributionBox from "../components/distribution";
 import GovernanceBox from "../components/governance";
 import Home from "../components/home";
-import { ValoperAddressComponent, useValoperAddress } from "../components/queries/get-valoper";
+import { useValoperAddress } from "../components/queries/get-valoper";
 import { getValconsAddress } from "../components/queries/get-valcons-query";
 import { CommissionFetcher } from "../components/queries/working-commission-query";
 import { useValidatorData } from "../components/queries/validator-query";
@@ -424,6 +424,10 @@ const DesktopMenu = ({
   const distributionBox = (
     <DistributionBox key={`distribution-${chainName}`} chainName={chainName} />
   );
+
+  useEffect(() => {
+    handleButtonClick(distributionBox);
+  }, [chainName]);
 
   const connectWalletBtn = (
     <WalletConnectComponent
@@ -806,7 +810,7 @@ export default function () {
   );
 
   const distributionBox = (
-    <DistributionBox chainName={chainName} valoperAddress={valoperAddress} />
+    <DistributionBox key={`distribution-${chainName}`} chainName={chainName} />
   );
 
   const connectWalletButton = (

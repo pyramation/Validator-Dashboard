@@ -48,8 +48,8 @@ export default function DistributionBox({ chainName }: DistributionBoxComponentP
   }, [commissionValue, chainName]);
 
   useEffect(() => {
-    console.log('DsitributionBox', valoperAddress, commissionValue, validatorInfo.moniker, validatorInfo.details);
-  }, [chainName]);
+    console.log('DistributionBox', valoperAddress, commissionValue, validatorInfo.moniker, validatorInfo.details);
+  }, [chainName, valoperAddress, commissionValue, validatorInfo.moniker, validatorInfo.details]);
 
   const handleButtonClick = (button: SetStateAction<string>) => {
     setActiveButton(button);
@@ -117,6 +117,7 @@ export default function DistributionBox({ chainName }: DistributionBoxComponentP
             <Box bg={colorMode === "dark" ? "#121212" : "white"} bgSize="450px">
               {activeButton === "commission" && (
                 <Card
+                  key={chainName}
                   bg={colorMode === "dark" ? "#121212" : "white"}
                   minWidth="500px"
                   padding="40px"
