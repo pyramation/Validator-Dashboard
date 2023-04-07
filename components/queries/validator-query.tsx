@@ -25,7 +25,7 @@ export function useValidatorData(chainName: ChainName) {
       const polkachuEndpoint = chainInfo.apis.rest.find(({ provider }) => provider === 'Polkachu');
       const restEndpoint = polkachuEndpoint ? polkachuEndpoint.address : chainInfo.apis.rest[0].address;
 
-      const url = `${restEndpoint}/cosmos/staking/v1beta1/validators/osmovaloper1clpqr4nrk4khgkxj78fcwwh6dl3uw4ep88n0y4`;
+      const url = `${restEndpoint}/cosmos/staking/v1beta1/validators/${valoperAddress}`;
 
       try {
         const response = await axios.get(url);
