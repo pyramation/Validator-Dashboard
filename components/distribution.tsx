@@ -45,17 +45,15 @@ export default function DistributionBox({ chainName }: DistributionBoxComponentP
     if (commissionValue !== undefined) {
       setCommission(commissionValue);
     }
-  }, [commissionValue, chainName]);
+  }, [commissionValue, chainName, validatorInfo, token, reward, valoperAddress, missedBlocks]);
 
-  useEffect(() => {
-    console.log('DistributionBox', valoperAddress, commissionValue, validatorInfo.moniker, validatorInfo.details);
-  }, [chainName, valoperAddress, commissionValue, validatorInfo.moniker, validatorInfo.details]);
 
   const handleButtonClick = (button: SetStateAction<string>) => {
     setActiveButton(button);
   };
 
   const { colorMode } = useColorMode();
+  
 
   return (
     <Container

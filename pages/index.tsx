@@ -33,6 +33,7 @@ import React, {
 } from "react";
 import { IconType } from "react-icons";
 import { FiChevronLeft, FiMenu, FiMoon, FiSun } from "react-icons/fi";
+import { AiOutlineReload } from "react-icons/ai";
 
 import {
   ConnectWalletButton,
@@ -59,6 +60,7 @@ import { useValoperAddress } from "../components/queries/get-valoper";
 import { getValconsAddress } from "../components/queries/get-valcons-query";
 import { CommissionFetcher } from "../components/queries/working-commission-query";
 import { useValidatorData } from "../components/queries/validator-query";
+import ValidatorImage from "../components/react/validator-logo";
 
 type IconTypeProps = string | IconType | JSX.Element | React.ReactNode | any;
 type DefaultLinkItemType = {
@@ -334,7 +336,6 @@ const DesktopMenu = ({
     <FiSun opacity={0.7} />
   );
 
-
   const [selectedComponent, setSelectedComponent] = useState<React.ReactNode>(() => <Home />);
   const handleButtonClick = (component: React.ReactNode) => {
     setSelectedComponent(component);
@@ -381,10 +382,20 @@ const DesktopMenu = ({
   );
 
   const valoperAddress = useValoperAddress(chainName);
+  const validatorData = useValidatorData(chainName);
+  const comission = CommissionFetcher(chainName);
+  const valImage = ValidatorImage(chainName)
 
-  const commissionValue = CommissionFetcher(chainName);
-
-  const validatorInfo = useValidatorData(chainName);
+  useEffect(() => {
+    const fetchValoperAndValidatorData = async () => {
+      useValoperAddress(chainName);
+      useValidatorData(chainName);
+      CommissionFetcher(chainName);
+      ValidatorImage(chainName);
+    };
+  
+    fetchValoperAndValidatorData();
+  }, [chainName, valoperAddress, validatorData, comission]);
 
   const Error = ({
     buttonText,
@@ -422,12 +433,11 @@ const DesktopMenu = ({
   );
 
   const distributionBox = (
-    <DistributionBox key={`distribution-${chainName}`} chainName={chainName} />
+    <DistributionBox chainName={chainName} />
   );
 
-  useEffect(() => {
-    handleButtonClick(distributionBox);
-  }, [chainName]);
+
+
 
   const connectWalletBtn = (
     <WalletConnectComponent
