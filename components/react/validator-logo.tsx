@@ -3,7 +3,7 @@ import { Image } from "@chakra-ui/react";
 import { keybase } from "../queries/identity-query";
 
 interface ValidatorImageProps {
-  chainName: string | undefined;
+  chainName: string;
 }
 
 const ValidatorImage: React.FC<ValidatorImageProps> = ({ chainName }) => {

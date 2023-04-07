@@ -14,7 +14,8 @@ import { useChain } from '@cosmos-kit/react';
   const chainInfo = chains.find(({ chain_name }) => chain_name === chainName);
 
   if (!chainInfo) {
-    throw new Error("Chain not found");
+    console.warn("Chain not found");
+    return undefined;
   }
 
   const bech32Prefix = chainInfo.bech32_prefix;
