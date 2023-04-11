@@ -18,6 +18,7 @@ import {
   useDisclosure,
   VStack,
   Heading,
+  HStack,
 } from "@chakra-ui/react";
 import { ChainName } from "@cosmos-kit/core";
 import { useChain, useManager } from "@cosmos-kit/react";
@@ -33,6 +34,7 @@ import React, {
 } from "react";
 import { IconType } from "react-icons";
 import { FiChevronLeft, FiMenu, FiMoon, FiSun } from "react-icons/fi";
+import { AiOutlineReload } from "react-icons/ai";
 
 import {
   ConnectWalletButton,
@@ -55,8 +57,13 @@ import {
 import DistributionBox from "../components/distribution";
 import GovernanceBox from "../components/governance";
 import Home from "../components/home";
-import { GetValoper, ValoperAddressComponent, useValoperAddress } from "../components/queries/get-valoper";
+import { useValoperAddress } from "../components/queries/get-valoper";
 import { getValconsAddress } from "../components/queries/get-valcons-query";
+import { CommissionFetcher } from "../components/queries/working-commission-query";
+import { useValidatorData } from "../components/queries/validator-query";
+import ValidatorImage from "../components/react/validator-logo";
+import { RepeatIcon } from "@chakra-ui/icons";
+import { useMissedBlocksCounter } from "../components/queries/slashing-query";
 
 type IconTypeProps = string | IconType | JSX.Element | React.ReactNode | any;
 type DefaultLinkItemType = {
@@ -331,25 +338,148 @@ const DesktopMenu = ({
     <FiMoon opacity={0.6} />,
     <FiSun opacity={0.7} />
   );
-  const [activeButton, setActiveButton] = useState("commission");
 
+  const [isDistributionBoxVisible, setIsDistributionBoxVisible] = useState(false);
+  const [selectedComponent, setSelectedComponent] = useState<React.ReactNode>(() => <Home />);
+  const handleButtonClick = (component: React.ReactNode, boxType: string | null, refresh: boolean = false) => {
+    if (!refresh) {
+      setSelectedComponent(component);
+    }
 
-  const [selectedComponent, setSelectedComponent] = useState(() => Home);
-  const handleButtonClick = (component: React.ComponentType | null) => {
-    setSelectedComponent(() => component);
+    if (boxType === 'distribution') {
+      setIsDistributionBoxVisible(true);
+    } else {
+      setIsDistributionBoxVisible(false);
+    }
   };
 
   const [chainName, setChainName] = useState<ChainName | undefined>(
-    "cosmoshub"
+    "akash"
+  );
+  const { chainRecords, getChainLogo } = useManager();
+
+  const chainOptions = useMemo(
+    () =>
+      chainRecords.map((chainRecord) => {
+        return {
+          chainName: chainRecord?.name,
+          label: chainRecord?.chain.pretty_name,
+          value: chainRecord?.name,
+          icon: getChainLogo(chainRecord.name),
+        };
+      }),
+    [chainRecords, getChainLogo]
   );
 
-
   useEffect(() => {
-    setChainName(window.localStorage.getItem("selected-chain") || "cosmoshub");
+    setChainName(window.localStorage.getItem("selected-chain") || "akash");
   }, []);
 
+  const onChainChange: handleSelectChainDropdown = async (
+    selectedValue: ChainOption | null
+  ) => {
+    setChainName(selectedValue?.chainName);
+    if (selectedValue?.chainName) {
+      window?.localStorage.setItem("selected-chain", selectedValue?.chainName);
+    } else {
+      window?.localStorage.removeItem("selected-chain");
+    }
+  };
 
-  const { connect, openView, status, username, address, message, wallet } = useChain(chainName || "akash");
+  const chooseChain = (
+    <ChooseChain
+      chainName={chainName}
+      chainInfos={chainOptions}
+      onChange={onChainChange}
+    />
+  );
+
+  const valoperAddress = useValoperAddress(chainName);
+  const validatorData = useValidatorData(chainName ?? "");
+  const comission = CommissionFetcher(chainName ?? "");
+  const valImage = ValidatorImage(chainName);
+  const valconsAddress = getValconsAddress(chainName, valoperAddress);
+  const missedBlocks = useMissedBlocksCounter(chainName ?? "", valoperAddress);
+
+  useEffect(() => {
+    const fetchValoperAndValidatorData = async () => {
+      useValoperAddress(chainName);
+      useValidatorData(chainName ?? "");
+      CommissionFetcher(chainName ?? "");
+      ValidatorImage(chainName);
+      useMissedBlocksCounter(chainName ?? "")
+      getValconsAddress(chainName, valoperAddress);
+    };
+  
+    fetchValoperAndValidatorData();
+  }, [chainName, valoperAddress, validatorData, comission]);
+
+  const Error = ({
+    buttonText,
+    wordOfWarning,
+    onClick,
+  }: {
+    buttonText: string;
+    wordOfWarning?: string;
+    onClick: MouseEventHandler<HTMLButtonElement>;
+  }) => {
+    const bg = useColorModeValue("orange.200", "orange.300");
+    // Rest of the Error component
+  };
+
+  const { connect, openView, status, username, address, message, wallet } =
+    useChain(chainName || "akash");
+  
+    const distributionBox = (
+    <DistributionBox key={address} chainName={chainName} />
+  );
+  const [distributionBoxComponent, setDistributionBoxComponent] = useState<React.ReactNode | null>(null);
+  useEffect(() => {
+    if (isDistributionBoxVisible) {
+      setDistributionBoxComponent(
+        <DistributionBox key={address??"" + Math.random()} chainName={chainName} />
+      );
+    } else {
+      setDistributionBoxComponent(null);
+    }
+  }, [isDistributionBoxVisible, address, chainName]);
+
+  // Events
+  const onClickConnect: MouseEventHandler = async (e) => {
+    e.preventDefault();
+    await connect();
+  };
+
+  const onClickOpenView: MouseEventHandler = (e) => {
+    e.preventDefault();
+    openView();
+  };
+
+  const addressButton = (
+    <CopyAddressBtn
+      walletStatus={status}
+      connected={<ConnectedShowAddress address={address} isLoading={false} />}
+    />
+  );
+
+  const connectWalletBtn = (
+    <WalletConnectComponent
+      walletStatus={status}
+      disconnect={
+        <Disconnected buttonText="Connect Wallet" onClick={onClickConnect} />
+      }
+      connecting={<Connecting />}
+      connected={
+        <Connected buttonText={"My Wallet"} onClick={onClickOpenView} />
+      }
+      rejected={<Rejected buttonText="Reconnect" onClick={onClickConnect} />}
+      error={<Error buttonText="Change Wallet" onClick={onClickOpenView} />}
+      notExist={
+        <NotExist buttonText="Install Wallet" onClick={onClickOpenView} />
+      }
+    />
+  );
+
 
   return (
     <Flex>
@@ -413,7 +543,7 @@ const DesktopMenu = ({
               <Button
                 colorScheme={colorMode === "dark" ? "white" : "black"}
                 variant="ghost"
-                onClick={() => handleButtonClick(() => <Home />)}
+                onClick={() => handleButtonClick(<Home />, null)}
                 fontSize="xl"
                 _hover={{
                   textDecoration: "underline",
@@ -425,7 +555,7 @@ const DesktopMenu = ({
               <Button
                 colorScheme={colorMode === "dark" ? "black" : "white"}
                 variant="ghost"
-                onClick={() => handleButtonClick(() => <GovernanceBox />)}
+                onClick={() => handleButtonClick(<GovernanceBox />, null)}
                 fontSize="xl"
                 _hover={{
                   textDecoration: "underline",
@@ -435,37 +565,25 @@ const DesktopMenu = ({
                 Governance
               </Button>
               <Button
-                colorScheme={colorMode === "dark" ? "black" : "white"}
-                variant="ghost"
-                onClick={() => handleButtonClick(() => <DistributionBox chainName={chainName} />)}
-                fontSize="xl"
-                _hover={{
-                  textDecoration: "underline",
-                  color: "teal",
-                }}
-              >
-                Distribution
-              </Button>
+  colorScheme={colorMode === "dark" ? "black" : "white"}
+  variant="ghost"
+  onClick={() => handleButtonClick(distributionBox, 'distribution')}
+  fontSize="xl"
+  _hover={{
+    textDecoration: "underline",
+    color: "teal",
+  }}
+>
+  Distribution
+</Button>
             </VStack>
           </ButtonGroup>
         </Stack>
-        <Box px={4} mx="auto" w="full" maxW={300} py={-4}>
+        <Box px={4} mx="auto" w="full" maxW={300} py={-2}>
           <WalletCardSection chainName={chainName || "cosmoshub"}/>
         </Box>
-        {copyAddressButton && (
-              <Center
-              pl={9}
-                justifyContent="center"
-                alignItems="center"
-                w="full"
-                maxW="fit-content"
-                minW="fit-content"
-              >
-                {copyAddressButton}
-              </Center>
-            )}
         <Box pl={5} mx="auto" w="full" maxW={300} py={4}>
-          {connectWalletButton}
+          {connectWalletBtn}
         </Box>
       </Stack>
       {/* navbar */}
@@ -507,19 +625,8 @@ const DesktopMenu = ({
             bg={colorMode === "dark" ? "black" : "white"}
             py={4}
           >
-            {copyAddressButton && (
-              <Center
-                justifyContent="center"
-                alignItems="center"
-                w="full"
-                maxW={60}
-                minW="fit-content"
-              >
-                {copyAddressButton}
-              </Center>
-            )}
             <Box w="full" minW={72} maxW={72}>
-              {chainDropdown}
+              {chooseChain}
             </Box>
             <IconButton
               display="flex"
@@ -583,12 +690,12 @@ const DesktopMenu = ({
         }}
       >
 {
-      selectedComponent && (
-        <Box>
-          {React.createElement(selectedComponent)}
-        </Box>
-      )
-    }
+  selectedComponent && (
+    <Box pl={20} alignSelf="center">
+      {distributionBoxComponent ? distributionBoxComponent : selectedComponent}
+    </Box>
+  )
+}
         <Box p={4} bg={colorMode === "dark" ? "black" : "white"}>
           {children}
         </Box>
@@ -732,7 +839,7 @@ export default function () {
   );
 
   const distributionBox = (
-    <DistributionBox chainName={chainName} valoperAddress={valoperAddress} />
+    <DistributionBox key={`distribution-${chainName}`} chainName={chainName} />
   );
 
   const connectWalletButton = (
@@ -757,9 +864,7 @@ export default function () {
     <Box w="full" h="full" minH={minHeight}>
       <SimpleLayout
         logo={logo}
-        copyAddressButton={addressButton}
         userInfo={userInfo}
-        chainDropdown={chooseChain}
         connectWalletButton={connectWalletButton}
         isFullWidth={false}
         children={undefined}

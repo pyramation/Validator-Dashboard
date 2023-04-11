@@ -3,6 +3,7 @@ import {
   Box,
   GridItem,
   Icon,
+  Image,
   Stack,
   useColorMode,
   useColorModeValue,
@@ -24,6 +25,11 @@ import {
   RejectedWarn,
   WalletConnectComponent,
 } from ".";
+
+import ValidatorImage from "./react/validator-logo";
+
+import { useValidatorData } from "./queries/validator-query";
+import { keybase } from "./queries/identity-query";
 
 
 export const WalletCardSection = ({ chainName, }: { chainName: string }) => {
@@ -61,9 +67,14 @@ export const WalletCardSection = ({ chainName, }: { chainName: string }) => {
     />
   );
 
+const validatorData = useValidatorData(chainName);
+const moniker = validatorData.moniker;
+
   const userInfo = username && (
-    <ConnectedUserInfo username={username} icon={<Astronaut />} />
+    <ConnectedUserInfo username={moniker}  icon={<ValidatorImage chainName={chainName} />}
+    />
   );
+  
   const addressBtn = (
     <CopyAddressBtn
       walletStatus={status}
@@ -76,7 +87,7 @@ export const WalletCardSection = ({ chainName, }: { chainName: string }) => {
   return (
     <>
       {connectWalletWarn && <GridItem>{connectWalletWarn}</GridItem>}
-      <GridItem px={6}>
+      <GridItem px={2}>
         <Stack
           justifyContent="center"
           alignItems="center"
@@ -89,12 +100,11 @@ export const WalletCardSection = ({ chainName, }: { chainName: string }) => {
           spacing={4}
           px={4}
           py={{ base: 6, md: 12 }}
+          textAlign="center"
         >
           {userInfo}
-
+            {addressBtn}
         </Stack>
-        <Box pt={4}>
-        </Box>
       </GridItem>
     </>
   );

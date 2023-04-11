@@ -17,32 +17,87 @@ import {
   useColorMode,
 } from "@chakra-ui/react";
 import { Card, CardHeader, CardBody, CardFooter } from "@chakra-ui/react";
-import { useCommission } from "./queries/commission-query";
 import { CommissionFetcher } from "./queries/working-commission-query";
-import { useToken } from "./queries/token-query";
-import { useValoper } from "./queries/validator-query";
-import { useDetails } from "./queries/validator-query";
+import { useValidatorData } from "./queries/validator-query";
 import { useMissedBlocksCounter } from "./queries/slashing-query";
 import { useReward } from "./queries/staking-query";
 import { ChainName } from "@cosmos-kit/core";
+import { useValoperAddress } from "./queries/get-valoper";
+import { commissionTX } from "./services/distribution-tx";
+import { SigningStargateClient } from "@cosmjs/stargate";
+import { useChain } from "@cosmos-kit/react";
+import { Spinner, CheckboxIcon } from "@chakra-ui/react";
+import { CheckIcon, CloseIcon } from "@chakra-ui/icons";
+import { chains } from "chain-registry";
+
 
 interface DistributionBoxComponentProps {
   chainName: ChainName | undefined;
-  valoperAddress: string;
 }
 
-export default function DistributionBox({ chainName, valoperAddress }: DistributionBoxComponentProps) {
+export default function DistributionBox({
+  chainName,
+}: DistributionBoxComponentProps) {
+  const { getSigningStargateClient, address } =
+  useChain(chainName ?? "");
+  const [resp, setResp] = useState('');
   const [activeButton, setActiveButton] = useState("commission");
-  const [commission, setCommission] = useState<number | undefined>();
-  const commissionValue = CommissionFetcher(valoperAddress);
-  const token = useToken();
-  const moniker = useValoper();
-  const details = useDetails();
+  const [commission, setCommission] = useState<number | undefined>(0);
+  const commissionValue = CommissionFetcher(chainName ?? "");
+  const chainInfo = chains.find(({ chain_name }) => chain_name === chainName);
+  const token = chainInfo?.staking?.staking_tokens?.[0]?.denom.slice(1) ?? "";
+  const validatorInfo = useValidatorData(chainName ?? "");
   const reward = useReward();
+  const valoperAddress = useValoperAddress(chainName);
 
-  const missedBlocks = useMissedBlocksCounter();
+  const missedBlocks = useMissedBlocksCounter(chainName, valoperAddress)?? "";
 
-  console.log('distribution',valoperAddress)
+  useEffect(() => {
+    if (missedBlocks !== undefined) {
+    }
+  }, [missedBlocks]);
+  
+  const [isSigning, setIsSigning] = useState(false);
+  const [isSigned, setIsSigned] = useState(false);
+  const [isError, setIsError] = useState(false);
+  
+  const handleCommissionTX = async (event: React.MouseEvent) => {
+    event.preventDefault();
+    setIsSigning(true);
+    setIsError(false);
+    try {
+      await commissionTX(
+        getSigningStargateClient,
+        setResp,
+        chainName,
+        address,
+        valoperAddress
+      )(event);
+      setIsSigning(false);
+      setIsSigned(true);
+      setTimeout(() => setIsSigned(false), 3000); // Reset the checkmark after 5 seconds
+    } catch (error) {
+      setIsSigning(false);
+      setIsError(true);
+      setTimeout(() => setIsError(false), 3000); // Reset the error state after 5 seconds
+    }
+  };
+  
+  
+  
+  useEffect(() => {
+    if (commissionValue !== undefined) {
+      setCommission(commissionValue);
+    }
+  }, [
+    commissionValue,
+    chainName,
+    validatorInfo,
+    token,
+    reward,
+    valoperAddress,
+    missedBlocks,
+  ]);
 
   const handleButtonClick = (button: SetStateAction<string>) => {
     setActiveButton(button);
@@ -57,7 +112,7 @@ export default function DistributionBox({ chainName, valoperAddress }: Distribut
       minW="820"
       py={10}
       alignContent="center"
-      pt="200px"
+      pt="150px"
       pr="200px"
     >
       <Flex
@@ -73,35 +128,38 @@ export default function DistributionBox({ chainName, valoperAddress }: Distribut
               gap="4"
             >
               <Button
+                fontSize="20px"
                 colorScheme={colorMode === "dark" ? "black" : "white"}
                 variant="ghost"
                 onClick={() => handleButtonClick("commission")}
                 _hover={{
-                    textDecoration: "underline",
-                    color: "teal",
-                  }}
+                  textDecoration: "underline",
+                  color: "teal",
+                }}
               >
                 Commission
               </Button>
               <Button
+                fontSize="20px"
                 colorScheme={colorMode === "dark" ? "black" : "white"}
                 variant="ghost"
                 onClick={() => handleButtonClick("staking")}
                 _hover={{
-                    textDecoration: "underline",
-                    color: "teal",
-                  }}
+                  textDecoration: "underline",
+                  color: "teal",
+                }}
               >
                 Staking
               </Button>
               <Button
+                fontSize="20px"
                 colorScheme={colorMode === "dark" ? "black" : "white"}
                 variant="ghost"
                 onClick={() => handleButtonClick("unjail")}
                 _hover={{
-                    textDecoration: "underline",
-                    color: "teal",
-                  }}
+                  textDecoration: "underline",
+                  color: "teal",
+                }}
               >
                 Unjail
               </Button>
@@ -109,6 +167,7 @@ export default function DistributionBox({ chainName, valoperAddress }: Distribut
             <Box bg={colorMode === "dark" ? "#121212" : "white"} bgSize="450px">
               {activeButton === "commission" && (
                 <Card
+                  key={chainName}
                   bg={colorMode === "dark" ? "#121212" : "white"}
                   minWidth="500px"
                   padding="40px"
@@ -121,12 +180,15 @@ export default function DistributionBox({ chainName, valoperAddress }: Distribut
                   <CardBody>
                     <Stack divider={<StackDivider />} spacing="4">
                       <Box>
-                        <Heading size="xs" textTransform="uppercase">
+                        <Heading fontFamily="Futura" size="md">
                           Claimmable Amount
                         </Heading>
                         <Stat>
                           <StatNumber>{commission}</StatNumber>
-                          <StatHelpText>{token}</StatHelpText>
+                          <StatHelpText
+  fontSize="20"
+  fontWeight="bold"
+>${token.toUpperCase()}</StatHelpText>
                         </Stat>
                       </Box>
                       <Box>
@@ -134,13 +196,76 @@ export default function DistributionBox({ chainName, valoperAddress }: Distribut
                           Validator
                         </Heading>
                         <Stat>
-                          <StatNumber>{moniker}</StatNumber>
-                          <StatHelpText>{details}</StatHelpText>
+                          <StatNumber>{validatorInfo.moniker}</StatNumber>
+                          <StatHelpText>{validatorInfo.details}</StatHelpText>
+                        </Stat>
+                      </Box>
+                      
+                      <Box>
+                      <Button
+                      onClick={(event) => handleCommissionTX(event)}
+  colorScheme={colorMode === "light" ? "black" : "white"}
+  variant="outline"
+  alignContent="center"
+  _hover={{
+    textDecoration: "underline",
+    color: "teal",
+  }}
+>
+{isSigning ? (
+    <Spinner size="xs" />
+  ) : isSigned ? (
+    <CloseIcon />
+  ) : isError ? (
+    <CheckIcon />
+  ) : (
+    "Sign"
+  )}
+</Button>
+                      </Box>
+                    </Stack>
+                  </CardBody>
+                </Card>
+              )}
+
+              {activeButton === "staking" && (
+                <Card
+                  bg={colorMode === "dark" ? "#121212" : "white"}
+                  minWidth="500px"
+                  padding="40px"
+                  pb="40px"
+                >
+                  <CardHeader>
+                    <Heading size="lg">Claim your staking rewards</Heading>
+                  </CardHeader>
+
+                  <CardBody>
+                    <Stack divider={<StackDivider />} spacing="4">
+                      {" "}
+                      {/* Add this Stack component */}
+                      <Box>
+                        <Heading size="xs" textTransform="uppercase">
+                          Claimmable Amount
+                        </Heading>
+                        <Stat>
+                          <StatNumber>{reward}</StatNumber>
+                          <StatHelpText>{token}</StatHelpText>
                         </Stat>
                       </Box>
                       <Box>
+                        <Heading size="xs" textTransform="uppercase">
+                          Validator Address
+                        </Heading>
+                        <text>
+                          Claiming your rewards from your delegations to all
+                          validators.
+                        </text>
+                      </Box>
+                      <Box>
                         <Button
-                          colorScheme={colorMode === "light" ? "black" : "white"}
+                          colorScheme={
+                            colorMode === "light" ? "black" : "white"
+                          }
                           variant="outline"
                           alignContent="center"
                           _hover={{
@@ -155,55 +280,6 @@ export default function DistributionBox({ chainName, valoperAddress }: Distribut
                   </CardBody>
                 </Card>
               )}
-
-{activeButton === "staking" && (
-  <Card
-    bg={colorMode === "dark" ? "#121212" : "white"}
-    minWidth="500px"
-    padding="40px"
-    pb="40px"
-  >
-    <CardHeader>
-      <Heading size="lg">Claim your staking rewards</Heading>
-    </CardHeader>
-
-    <CardBody>
-      <Stack divider={<StackDivider />} spacing="4"> {/* Add this Stack component */}
-        <Box>
-          <Heading size="xs" textTransform="uppercase">
-            Claimmable Amount
-          </Heading>
-          <Stat>
-            <StatNumber>{reward}</StatNumber>
-            <StatHelpText>{token}</StatHelpText>
-          </Stat>
-        </Box>
-        <Box>
-          <Heading size="xs" textTransform="uppercase">
-            Validator Address
-          </Heading>
-          <text>
-            Claiming your rewards from your delegations to all
-            validators.
-          </text>
-        </Box>
-        <Box>
-          <Button
-             colorScheme={colorMode === "light" ? "black" : "white"}
-             variant="outline"
-             alignContent="center"
-             _hover={{
-                textDecoration: "underline",
-                color: "teal",
-              }}
-          >
-            Sign
-          </Button>
-        </Box>
-      </Stack> 
-    </CardBody>
-  </Card>
-)}
 
               {activeButton === "unjail" && (
                 <Card
@@ -240,13 +316,15 @@ export default function DistributionBox({ chainName, valoperAddress }: Distribut
                           Validator
                         </Heading>
                         <Stat>
-                          <StatNumber>{moniker}</StatNumber>
-                          <StatHelpText>{details}</StatHelpText>
+                          <StatNumber>{validatorInfo.moniker}</StatNumber>
+                          <StatHelpText>{validatorInfo.details}</StatHelpText>
                         </Stat>
                       </Box>
                       <Box>
                         <Button
-                          colorScheme={colorMode === "light" ? "black" : "white"}
+                          colorScheme={
+                            colorMode === "light" ? "black" : "white"
+                          }
                           variant="outline"
                           alignContent="center"
                           _hover={{

@@ -1,78 +1,63 @@
 import { ChainName } from '@cosmos-kit/core';
-import { useManager } from '@cosmos-kit/react';
-import { useState, useMemo, useEffect } from 'react';
-import { akash } from '../../codegen';
-import { osmosis } from '../../codegen';
-import { ChooseChain } from '../react';
-import { handleSelectChainDropdown, ChainOption } from '../types';
+import { useState, useEffect } from 'react';
 import { useValoperAddress } from './get-valoper';
+import { chains } from 'chain-registry';
+import axios from 'axios';
 
-export function CommissionFetcher(valoperAddress: string) {
-  const [chainName, setChainName] = useState<ChainName | undefined>(
-    "cosmoshub"
-  );
-  const { chainRecords, getChainLogo } = useManager();
-
-  const chainOptions = useMemo(
-    () =>
-      chainRecords.map((chainRecord) => {
-        return {
-          chainName: chainRecord?.name,
-          label: chainRecord?.chain.pretty_name,
-          value: chainRecord?.name,
-          icon: getChainLogo(chainRecord.name),
-        };
-      }),
-    [chainRecords, getChainLogo]
-  );
-
-  useEffect(() => {
-    setChainName(window.localStorage.getItem("selected-chain") || "cosmoshub");
-  }, []);
-
-  const onChainChange: handleSelectChainDropdown = async (
-    selectedValue: ChainOption | null
-  ) => {
-    setChainName(selectedValue?.chainName);
-    if (selectedValue?.chainName) {
-      window?.localStorage.setItem("selected-chain", selectedValue?.chainName);
-    } else {
-      window?.localStorage.removeItem("selected-chain");
-    }
-  };
-
-  const chooseChain = (
-    <ChooseChain
-      chainName={chainName}
-      chainInfos={chainOptions}
-      onChange={onChainChange}
-    />
-  );
+export function CommissionFetcher(chainName: ChainName): number | undefined {
+  const [commission, setCommission] = useState<number | undefined>(undefined);
+  const valoperAddress = useValoperAddress(chainName);
 
   useEffect(() => {
     async function fetchCommission() {
-      const client = await akash.ClientFactory.createLCDClient({
-        restEndpoint: 'https://akash.api.chandrastation.com',
-      });
+      const chainInfo = chains.find(({ chain_name }) => chain_name === chainName);
 
-      const data = await client.cosmos.distribution.v1beta1.validatorCommission({
-        validatorAddress: valoperAddress,
-      });
-      console.log('incommissionfunction',valoperAddress)
+      if (!chainInfo?.apis?.rest) {
+        console.error('REST endpoint not found for the given chainName');
+        return;
+      }
 
-      const commission = data.commission?.commission[0].amount;
-      const roundedCommission = Math.round(Number(commission)) / 100;
-      const roundedAmount = Math.round(roundedCommission) / 100;
-      return roundedAmount / 100;
+      const polkachuEndpoint = chainInfo.apis.rest.find(({ provider }) => provider === 'Polkachu');
+      const restEndpoint = polkachuEndpoint ? polkachuEndpoint.address : chainInfo.apis.rest[0].address;
+      const mainDenom = chainInfo?.staking?.staking_tokens?.[0]?.denom; // Get the main denomination for the chain
+
+      const url = `${restEndpoint}/cosmos/distribution/v1beta1/validators/${valoperAddress}/commission`;
+
+      try {
+        const response = await axios.get(url);
+        const data = response.data;
+
+        // Filter commissions by the main denomination
+        const mainCommission = data?.commission?.commission.find((commission: { denom: string }) => commission.denom === mainDenom);
+        // Extract the amount from the main commission
+        const commissionAmount = mainCommission?.amount;
+
+        function getConversionFactor(chainName: ChainName): number {
+          // You can customize this list based on the conversion factor you need for each chain
+          const chainsWithLargeFactor = ['canto', 'evmos', 'injective'];
+        
+          if (chainsWithLargeFactor.includes(chainName)) {
+            return 1e18; // For 1000000000000000000 adenom = 1 denom
+          }
+          return 1e6; // For 1000000 udenom = 1 denom
+        }
+        
+        // Inside fetchCommission function
+        if (commissionAmount) {
+          const conversionFactor = getConversionFactor(chainName);
+          const commissionInDenom = Number(commissionAmount) / conversionFactor;
+          const roundedCommission = Math.round(commissionInDenom * 100) / 100;
+          return roundedCommission;
+        }
+      } catch (error) {
+        console.error('Error fetching commission:', error);
+      }
     }
 
-    if (valoperAddress) {
-      fetchCommission().then((commission) => {
-        console.log('Fetched commission:', commission);
-        // Do something with the commission, e.g., set it to a state variable or pass it to a callback.
-      });
-    }
-  }, [valoperAddress]);
+    fetchCommission().then((commission) => {
+      setCommission(commission);
+    });
+  }, [valoperAddress, chainName]);
 
-  return null; // Render nothing, or you can return the chooseChain element if needed.
+  return commission;
 }

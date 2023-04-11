@@ -1,81 +1,44 @@
-import { getValconsAddress } from './get-valcons-query';
-import { akash, osmosis } from '../../codegen';
 import { ChainName } from '@cosmos-kit/core';
 import { useState, useEffect } from 'react';
+import { getValconsAddress } from './get-valcons-query';
+import { chains } from 'chain-registry';
+import axios from 'axios';
 
-const selectedChainKey = 'selected-chain';
-
-export function useMissedBlocksCounter(): number {
-  const [missedBlocksCounter, setMissedBlocksCounter] = useState<number>(0);
-  const [chainName, setChainName] = useState<ChainName | undefined>();
+export function useMissedBlocksCounter(chainName: ChainName | undefined, valoperAddress: string): number | undefined {
+  const [missedBlocks, setMissedBlocks] = useState<number | undefined>(undefined);
 
   useEffect(() => {
-    async function fetchMissedBlocksCounter(chainName: ChainName): Promise<Long> {
-      if (chainName !== 'akash' && chainName !== 'osmosis') {
-        throw new Error(`Unsupported chain: ${chainName}`);
+    async function fetchMissedBlocks() {
+      const chainInfo = chains.find(({ chain_name }) => chain_name === chainName);
+
+      if (!chainInfo?.apis?.rest) {
+        console.error('REST endpoint not found for the given chainName');
+        return;
       }
 
-      let client;
-      switch (chainName) {
-        case 'akash':
-          client = await akash.ClientFactory.createLCDClient({
-            restEndpoint: 'https://akash.api.chandrastation.com'
-          });
-          break;
-        case 'osmosis':
-          client = await osmosis.ClientFactory.createLCDClient({
-            restEndpoint: 'https://osmosis.api.chandrastation.com'
-          });
-          break;
+      const polkachuEndpoint = chainInfo.apis.rest.find(({ provider }) => provider === 'Polkachu');
+      const restEndpoint = polkachuEndpoint ? polkachuEndpoint.address : chainInfo.apis.rest[0].address;
+
+      try {
+        const valconsAddress = await getValconsAddress(chainName, valoperAddress);
+
+        const url = `${restEndpoint}/cosmos/slashing/v1beta1/signing_infos/${valconsAddress}`;
+
+        const response = await axios.get(url);
+        const data = response.data;
+
+        // Get missed blocks counter
+        const missedBlocksCounter = data?.val_signing_info?.missed_blocks_counter;
+        setMissedBlocks(missedBlocksCounter);
+      } catch (error) {
+        console.error('Error fetching missed blocks:', error);
       }
-
-      const valconsAddress = await getValconsAddress(chainName || "akash")
-      console.log(valconsAddress)
-
-      const data = await client.cosmos.slashing.v1beta1.signingInfo({
-          consAddress: valconsAddress
-      })
-
-      const missedBlocksCounter = data.val_signing_info?.missed_blocks_counter;
-      if (!missedBlocksCounter) {
-        throw new Error('Missed blocks counter not found');
-      }
-
-      return missedBlocksCounter;
     }
 
-    const updateMissedBlocks = async () => {
-      window.addEventListener("keplr_keystorechange", () => {
-        const chainName = window.localStorage.getItem('selected-chain') as ChainName;
-        fetchMissedBlocksCounter(chainName).then(newMissedBlocks => {
-          setMissedBlocksCounter(newMissedBlocks);
-          setChainName(chainName);
-        });
-      });
-    
-      const chainName = window.localStorage.getItem('selected-chain') as ChainName;
-      const newMissedBlocks = await fetchMissedBlocksCounter(chainName);
-      setMissedBlocksCounter(newMissedBlocks);
-      setChainName(chainName);
-    };
+    if (chainName && valoperAddress) {
+      fetchMissedBlocks();
+    }
+  }, [chainName, valoperAddress]);
 
-    updateMissedBlocks();
-
-    // Set up event listener for changes to selected chain in local storage
-    window.addEventListener('storage', updateMissedBlocks);
-
-    // Set up event listener for window focus
-    window.addEventListener('focus', updateMissedBlocks);
-
-    // Set up event listener for Keplr's keystore change event
-    window.addEventListener('keplr_keystorechange', updateMissedBlocks);
-
-    return () => {
-      window.removeEventListener('storage', updateMissedBlocks);
-      window.removeEventListener('focus', updateMissedBlocks);
-      window.removeEventListener('keplr_keystorechange', updateMissedBlocks);
-    };
-  }, []);
-
-  return missedBlocksCounter;
+  return missedBlocks;
 }

@@ -35,10 +35,11 @@ chain name solution was solved by passing it as a prop to the functions then ren
 * Valoper 
 * Valcons
 * ChainName
+* Onclick button render for new simpleLayout Items
 
 ### Pending
 * Distribution/Governance Box Rehaul
-* Onclick button render for new simpleLayout Items
+* Re Render boxes on chain name switch or add refresh button to re query for info
 * Fix/complete all queries
 * Creating Transactions for each box subset
 * Build manager box

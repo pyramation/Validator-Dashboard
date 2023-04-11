@@ -37,7 +37,7 @@ export default function GovernanceBox() {
   const { colorMode } = useColorMode();
 
   return (
-    <Container maxW="8xl" py={10} alignContent="center" pt="200px" pr="150px">
+    <Container maxW="8xl" py={10} alignContent="center" pt="150px" pr="150px">
       <Flex alignItems="center" justifyContent="center">
         <Card bg={colorMode === "dark" ? "#121212" : "white"}>
           <CardBody alignContent="center" position="relative">
@@ -82,7 +82,7 @@ export default function GovernanceBox() {
                 <Card
                 bg={colorMode === "dark" ? "#121212" : "white"}
                   minHeight="450px"
-                  minWidth="600px"
+                  minWidth="500px"
                   padding="40px"
                   pb="40px"
                 >
@@ -131,7 +131,8 @@ export default function GovernanceBox() {
                 <Card
                 bg={colorMode === "dark" ? "#121212" : "white"}
                   minHeight="450px"
-                  minWidth="600px"
+                  minWidth="500px"
+                  maxWidth="500px"
                   padding="40px"
                   pb="40px"
                 >
@@ -175,7 +176,7 @@ export default function GovernanceBox() {
                 <Card
                 bg={colorMode === "dark" ? "#121212" : "white"}
                   minHeight="450px"
-                  minWidth="600px"
+                  minWidth="500px"
                   padding="40px"
                   pb="40px"
                 >

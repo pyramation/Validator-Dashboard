@@ -2,15 +2,10 @@ import { fromBech32, toBech32 } from '@cosmjs/encoding';
 import { ChainName } from '@cosmos-kit/core';
 import { chains } from 'chain-registry';
 import { useEffect, useState } from 'react';
-import { FunctionComponent } from 'react';
 import { useChain } from '@cosmos-kit/react';
 
-interface ValoperAddressComponentProps {
-    chainName: ChainName | undefined;
-  }
-  
 
-export function accountAddressToValoper(address: string | undefined, chainName: string): string | undefined {
+  export function accountAddressToValoper(address: string | undefined, chainName: ChainName | undefined): string | undefined {
   if (!address) {
     return undefined;
   }
@@ -19,7 +14,8 @@ export function accountAddressToValoper(address: string | undefined, chainName: 
   const chainInfo = chains.find(({ chain_name }) => chain_name === chainName);
 
   if (!chainInfo) {
-    throw new Error("Chain not found");
+    console.warn("Chain not found");
+    return undefined;
   }
 
   const bech32Prefix = chainInfo.bech32_prefix;
@@ -29,28 +25,16 @@ export function accountAddressToValoper(address: string | undefined, chainName: 
 
 export function useValoperAddress(chainName: ChainName | undefined): string {
   const [valoperAddress, setValoperAddress] = useState("");
-  const { address } = useChain(chainName || "cosmoshub");
+  const { address } = useChain(chainName || "akash");
 
   useEffect(() => {
     const updateValoperAddress = () => {
-      const newAddress = accountAddressToValoper(address, chainName || "");
+      const newAddress = accountAddressToValoper(address, chainName);
       setValoperAddress(newAddress || "");
     };
-
+  
     updateValoperAddress();
   }, [chainName, address]);
 
   return valoperAddress;
 }
-
-export const ValoperAddressComponent: FunctionComponent<ValoperAddressComponentProps> = ({ chainName }) => {
-    const valoperAddress = useValoperAddress(chainName);
-    console.log('inthevaloperfunc',valoperAddress)
-  
-    return (
-      null
-    );
-  };
-
-
-  console.log(ValoperAddressComponent)
