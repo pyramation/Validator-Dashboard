@@ -34,7 +34,6 @@ export function useValidatorData(chainName: ChainName) {
         const moniker = data.validator.description.moniker;
         const details = data.validator.description.details;
         const identity = data.validator.description.identity;
-        console.log(identity)
 
         return { moniker, details, identity };
       } catch (error) {

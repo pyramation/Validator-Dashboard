@@ -69,7 +69,6 @@ export const WalletCardSection = ({ chainName, }: { chainName: string }) => {
 
 const validatorData = useValidatorData(chainName);
 const moniker = validatorData.moniker;
-const valImage = ValidatorImage
 
   const userInfo = username && (
     <ConnectedUserInfo username={moniker}  icon={<ValidatorImage chainName={chainName} />}
@@ -88,7 +87,7 @@ const valImage = ValidatorImage
   return (
     <>
       {connectWalletWarn && <GridItem>{connectWalletWarn}</GridItem>}
-      <GridItem px={6}>
+      <GridItem px={2}>
         <Stack
           justifyContent="center"
           alignItems="center"
@@ -101,12 +100,11 @@ const valImage = ValidatorImage
           spacing={4}
           px={4}
           py={{ base: 6, md: 12 }}
+          textAlign="center"
         >
           {userInfo}
-
+            {addressBtn}
         </Stack>
-        <Box pt={4}>
-        </Box>
       </GridItem>
     </>
   );
